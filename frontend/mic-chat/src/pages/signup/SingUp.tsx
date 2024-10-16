@@ -13,6 +13,13 @@ const SignUp = () => {
         <form >
           <div>
             <label className='label p-2'>
+              <span className='text-base label-text'>Full Name</span>
+            </label>
+            <input type="text" name="" placeholder='Enter full name' className='w-full input input-bordered h-10' />
+          </div>
+          
+          <div>
+            <label className='label p-2'>
               <span className='text-base label-text'>Username</span>
             </label>
             <input type="text" name="" placeholder='Enter username' className='w-full input input-bordered h-10' />
@@ -24,9 +31,20 @@ const SignUp = () => {
             </label>
             <input type="password" name="" placeholder='Enter password' className='w-full input input-bordered h-10' />
           </div>
+          
+          <div>
+            <label className='label p-2'>
+              <span className='text-base label-text'>Confirm Password</span>
+            </label>
+            <input type="password" name="" placeholder='Confirm password' className='w-full input input-bordered h-10' />
+          </div>
+
+          <a href="" className='text-sm hover:underline hover:text-blue-600 mt-4 inline-block mb-4'>
+            Already have an account?
+          </a>
 
           <div>
-            <button className='btn btn-block btn-sm mt-2'>Login</button>
+            <button className='btn btn-block btn-sm mt-2'>Sign Up</button>
           </div>
         </form>
 
