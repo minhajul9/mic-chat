@@ -1,4 +1,5 @@
 
+//@ts-ignore
 function GenderCheckbox({ onCheckboxChange, selectedGender }) {
     return (
         <div className='flex'>
@@ -8,7 +9,7 @@ function GenderCheckbox({ onCheckboxChange, selectedGender }) {
                     <span className='label-text'>Male</span>
                     <input type="checkbox" className='checkbox border-slate-900'
                         checked={selectedGender === 'male'}
-                        onChange={onCheckboxChange('male')}
+                        onChange={() => onCheckboxChange('male')}
                     />
                 </label>
             </div>
@@ -18,7 +19,7 @@ function GenderCheckbox({ onCheckboxChange, selectedGender }) {
                     <span className='label-text'>Female</span>
                     <input type="checkbox" className='checkbox border-slate-900'
                         checked={selectedGender === 'female'}
-                        onChange={onCheckboxChange('female')}
+                        onChange={() => onCheckboxChange('female')}
                     />
                 </label>
             </div>
