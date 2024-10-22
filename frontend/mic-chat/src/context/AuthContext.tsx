@@ -4,6 +4,7 @@ interface AuthContextProviderProps {
     children: ReactNode;
 }
 
+//@ts-ignore
 export const AuthContext = createContext();
 
 export const useAuthContext = () => {

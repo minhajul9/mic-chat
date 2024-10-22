@@ -4,7 +4,7 @@ import { useAuthContext } from '../context/AuthContext';
 
 const useSignup = () => {
     const [loading, setLoading] = useState(false);
-
+    //@ts-ignore
     const { authUser, setAuthUser } = useAuthContext();
     //@ts-ignore
     const signUp = async ({ fullName, username, password, confirmPassword, gender }) => {
@@ -29,11 +29,13 @@ const useSignup = () => {
             if (data.error) {
                 toast.error(data.message);
             }
-
-            localStorage.setItem("chat-user", JSON.stringify(data));
-            setAuthUser({ ...data });
+            else {
+                localStorage.setItem("chat-user", JSON.stringify(data));
+                setAuthUser({ ...data });
+            }
 
         } catch (error) {
+            //@ts-ignore
             toast.error(error.message);
         }
         finally {
