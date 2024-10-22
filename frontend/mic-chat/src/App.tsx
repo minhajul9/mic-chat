@@ -8,6 +8,7 @@ import { useAuthContext } from './context/AuthContext'
 
 const App = () => {
 
+  //@ts-ignore
   const { authUser } = useAuthContext();
   return (
     <div className='p-4 h-screen flex items-center justify-center'>
