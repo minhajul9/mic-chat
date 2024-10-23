@@ -17,6 +17,8 @@ const useGetConversations = () => {
                 if (data.error) {
                     throw new Error(data.message);
                 }
+
+                setConversations(data);
             } catch (error) {
                 toast.error(error.message);
             }
@@ -24,9 +26,11 @@ const useGetConversations = () => {
                 setLoading(false)
             }
         }
+
+        getConversations();
     }, [])
 
-    return {loading, conversations}
+    return { loading, conversations }
 }
 
 export default useGetConversations
