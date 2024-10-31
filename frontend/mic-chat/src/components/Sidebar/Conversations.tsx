@@ -4,14 +4,15 @@ import Conversation from "./Conversation";
 const Conversations = () => {
 
     const { loading, conversations } = useGetConversations();
-    console.log("conversations: ", conversations);
+    // console.log("conversations: ", conversations);
     return (
         <div className='py-2 flex flex-col overflow-auto'>
 
             {
-                conversations.map((conversation) => <Conversation
-                    key={conversation.id}
+                conversations.map((conversation, index) => <Conversation
+                    key={conversation._id}
                     conversation={conversation}
+                    lastIdx={index === conversations.length - 1}
                 />)
             }
 

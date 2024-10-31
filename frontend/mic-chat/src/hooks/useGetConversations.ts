@@ -20,6 +20,7 @@ const useGetConversations = () => {
 
                 setConversations(data);
             } catch (error) {
+                //@ts-ignore
                 toast.error(error.message);
             }
             finally {
