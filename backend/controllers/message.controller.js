@@ -50,7 +50,9 @@ export const getMessages = async (req, res) => {
             }
         }).populate('messages')
 
-        res.status(200).json(conversation);
+        if (!conversation) return res.status(200).json([]);
+
+        res.status(200).json(conversation?.messages);
     } catch (error) {
         console.log("Error from send message controller: ", error.message);
         res.status(500).json({ error: "Internal server error." })

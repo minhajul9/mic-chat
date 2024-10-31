@@ -15,6 +15,7 @@ const useGetConversations = () => {
                 const data = await res.json();
 
                 if (data.error) {
+                    console.log("from get conversations",data)
                     throw new Error(data.message);
                 }
 

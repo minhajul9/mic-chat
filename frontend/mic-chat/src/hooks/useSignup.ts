@@ -27,6 +27,7 @@ const useSignup = () => {
             const data = await res.json();
 
             if (data.error) {
+                console.log(data)
                 toast.error(data.message);
             }
             else {
