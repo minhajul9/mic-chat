@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createContext, useContext, useEffect, useState } from "react";
+
 import { useAuthContext } from "./AuthContext";
 import { io } from "socket.io-client";
 
@@ -10,6 +11,7 @@ export const useSocketContext = () => {
     return useContext(SocketContext);
 }
 
+
 //@ts-ignore
 export const SocketContextProvider = ({ children }) => {
 
@@ -19,18 +21,20 @@ export const SocketContextProvider = ({ children }) => {
 
     useEffect(() => {
         if (authUser) {
-            const socket = io("http://localhost:5004",{
+
+            const socket = io("http://localhost:5004", {
                 query: {
-                    userId : authUser._id
+                    userId: authUser._id
                 }
             });
 
             setSocket(socket);
 
-            socket.on("getOnlineUsers", (users) =>{
+            socket.on("getOnlineUsers", (users) => {
                 console.log(users);
                 setOnlineUsers(users);
             })
+
 
             return () => socket.close();
         }
@@ -39,6 +43,8 @@ export const SocketContextProvider = ({ children }) => {
             setSocket(null);
         }
     }, [authUser])
+
+
 
     return (<SocketContext.Provider value={{ socket, onlineUsers }}>
         {children}
