@@ -1,3 +1,4 @@
+import 'package:chat_app/src/component/blinking_logo.dart';
 import 'package:chat_app/src/pages/homePage/home_page.dart';
 import 'package:chat_app/src/pages/loginPage/login_page.dart';
 import 'package:chat_app/src/providers/auth_provider.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: authProvider.isLoading
-          ? CircularProgressIndicator()
+          ? const BlinkingLogoPage()
           : authProvider.user != null
               ? HomePage()
               : LoginPage(),
