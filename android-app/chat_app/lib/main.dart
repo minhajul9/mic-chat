@@ -18,18 +18,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // final authProvider = Provider.of<AuthProvider>(context, listen: false);
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: authProvider.isLoading
-          ? const BlinkingLogoPage()
-          : authProvider.user != null
-              ? HomePage()
-              : LoginPage(),
-    );
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: Consumer<AuthProvider>(
+          builder: (context, authProvider, child) => authProvider.isLoading
+              ? const BlinkingLogoPage()
+              : authProvider.user != null
+                  ? HomePage()
+                  : LoginPage(),
+        ));
   }
 }
