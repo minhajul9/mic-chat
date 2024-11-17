@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chat_app/backendConfig/config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class AuthProvider with ChangeNotifier {
   //backend address
@@ -24,5 +25,19 @@ class AuthProvider with ChangeNotifier {
         },
         body: json.encode(values));
   }
-        // body: json.encode({"encryptedData": encryptedData}));
+  // body: json.encode({"encryptedData": encryptedData}));
+}
+
+class AuthProviderWidget extends StatelessWidget {
+  final Widget child;
+
+  const AuthProviderWidget({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => AuthProvider(),
+      child: child,
+    );
+  }
 }
