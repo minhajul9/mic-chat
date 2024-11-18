@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chat_app/backendConfig/config.dart';
 import 'package:chat_app/src/encryption/encryption.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,7 +67,37 @@ class AuthProvider with ChangeNotifier {
         },
         body: json.encode(values));
   }
-  // body: json.encode({"encryptedData": encryptedData}));
+
+  Future<bool> handleLogin(Map<String, dynamic> values) async {
+    final response = await http.post(
+      Uri.parse('$serverUrl/api/auth/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(values),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['error']) {
+        _showAlert(data['message'], 'error');
+      }
+    }
+
+    return true;
+  }
+
+  void _showAlert(String message, String type) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        backgroundColor: type == 'success'
+            ? Colors.green
+            : type == 'warning'
+                ? Colors.yellow
+                : Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
 }
 
 class AuthProviderWidget extends StatelessWidget {

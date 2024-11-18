@@ -10,6 +10,7 @@ class BlinkingLogoPage extends StatefulWidget {
 class _BlinkingLogoPageState extends State<BlinkingLogoPage> {
   // A variable to control the opacity
   double _opacity = 1.0;
+  bool _isBlinking = true;
 
   @override
   void initState() {
@@ -18,14 +19,20 @@ class _BlinkingLogoPageState extends State<BlinkingLogoPage> {
   }
 
   // This method will control the blinking by changing opacity
-  void _startBlinking() {
-    // Create a loop that changes the opacity every second
-    Future.delayed(Duration(seconds: 1), () {
+  void _startBlinking() async {
+    while (_isBlinking) {
+      await Future.delayed(const Duration(seconds: 1));
+      if (!mounted) return; // Check if the widget is still mounted
       setState(() {
         _opacity = _opacity == 1.0 ? 0.0 : 1.0; // Toggle opacity
       });
-      _startBlinking(); // Keep blinking
-    });
+    }
+  }
+
+  @override
+  void dispose() {
+    _isBlinking = false; // Stop blinking when the widget is disposed
+    super.dispose();
   }
 
   @override
