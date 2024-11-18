@@ -137,7 +137,8 @@ class _LoginPageState extends State<LoginPage> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 27, 26, 85)),
                             child: isLoading
                                 ? CircularProgressIndicator()
                                 : Text("Login",
@@ -164,8 +165,9 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   Text(
                                     "Sign Up",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromARGB(255, 27, 26, 85)),
                                   ),
                                 ],
                               )),
