@@ -83,6 +83,7 @@ class AuthProvider with ChangeNotifier {
         _showAlert(data['message'], 'error');
       } else {
         user = data;
+        await loadConversations(data['_id']);
 
         notifyListeners();
         return true;
@@ -90,6 +91,17 @@ class AuthProvider with ChangeNotifier {
     }
 
     return false;
+  }
+
+  Future<void> loadConversations(String id) async {
+    print("$id\n\n\n\n\n\n\n\n");
+    final response = await http.get(
+      Uri.parse('$serverUrl/api/user/conversations/$id'),
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print(data);
+    }
   }
 
   void _showAlert(String message, String type) {

@@ -1,3 +1,4 @@
+import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
 
 export const getUsersForSidebar = async (req, res) => {
@@ -11,5 +12,24 @@ export const getUsersForSidebar = async (req, res) => {
     } catch (error) {
         console.log("error in signup controller", error.message);
         res.status(500).json({ error: true, message: "Internal server error" })
+    }
+}
+
+export const getConversations = async (req, res) => {
+    try {
+
+        const userId = new ObjectId(req.params.userId);
+
+        console.log(userId);
+
+        const conversations = await Conversation.find({
+            participants: userId
+        })
+
+        console.log(conversations);
+
+        res.send(conversations)
+    } catch (error) {
+
     }
 }
