@@ -59,25 +59,26 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> handleRegistration(Map<String, dynamic> values) async {
-    final response = await http.post(Uri.parse('$serverUrl/api/auth/signup'),
-        headers: {
-          'Content-Type': 'application/json',
-          "ngrok-skip-browser-warning": "69420",
-        },
-        body: json.encode(values));
-  }
+  // Future<void> handleRegistration(Map<String, dynamic> values) async {
+  //   final response = await http.post(Uri.parse('$serverUrl/api/auth/signup'),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         "ngrok-skip-browser-warning": "69420",
+  //       },
+  //       body: json.encode(values));
+  // }
 
   Future<bool> handleLogin(Map<String, dynamic> values) async {
-    // print(values);
+    print(values);
     final response = await http.post(
       Uri.parse('$serverUrl/api/auth/login'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(values),
     );
 
+    print("response return ${response.body}");
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final data = json.decode(response.body);
       print('data :  $data');
       if (data['error'] != null && data['error']) {
         _showAlert(data['message'], 'error');

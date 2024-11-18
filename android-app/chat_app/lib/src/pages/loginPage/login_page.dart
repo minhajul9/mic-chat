@@ -27,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 7, 15, 43),
       body: Center(
+          child: SingleChildScrollView(
         child: Container(
           constraints: BoxConstraints(maxWidth: 660),
           width: MediaQuery.of(context).size.width * 0.8,
@@ -174,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ))),
         ),
-      ),
+      )),
     );
   }
 }
