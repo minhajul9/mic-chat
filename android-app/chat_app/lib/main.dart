@@ -22,16 +22,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 7, 15, 58)),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 7, 15, 58)),
           useMaterial3: true,
         ),
         home: Consumer<AuthProvider>(
-            builder: (context, authProvider, child) => HomePage()
-            // authProvider.isLoading
-            //     ? const BlinkingLogoPage()
-            //     : authProvider.user != null
-            //         ? HomePage()
-            //         : LoginPage(),
-            ));
+          builder: (context, authProvider, child) => authProvider.isLoading
+              ? const BlinkingLogoPage()
+              : authProvider.user != null
+                  ? HomePage()
+                  : LoginPage(),
+        ));
   }
 }

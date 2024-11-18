@@ -69,6 +69,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> handleLogin(Map<String, dynamic> values) async {
+    // print(values);
     final response = await http.post(
       Uri.parse('$serverUrl/api/auth/login'),
       headers: {'Content-Type': 'application/json'},
@@ -77,12 +78,18 @@ class AuthProvider with ChangeNotifier {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      if (data['error']) {
+      print('data :  $data');
+      if (data['error'] != null && data['error']) {
         _showAlert(data['message'], 'error');
+      } else {
+        user = data;
+
+        notifyListeners();
+        return true;
       }
     }
 
-    return true;
+    return false;
   }
 
   void _showAlert(String message, String type) {

@@ -113,8 +113,9 @@ class _LoginPageState extends State<LoginPage> {
                               });
 
                               if (_formKey.currentState!.validate()) {
+                                print('object');
                                 bool status = await authProvider.handleLogin({
-                                  'email': emailController.text,
+                                  'username': emailController.text,
                                   'password': passwordController.text
                                 });
 

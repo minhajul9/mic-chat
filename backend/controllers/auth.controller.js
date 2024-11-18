@@ -48,17 +48,20 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
     try {
 
+        console.log(req.body)
+
         const { username, password } = req.body;
 
         const user = await User.findOne({ username });
+        console.log(user);
 
-        const isPasswordMatched = await bcrypt.compare(password, user?.password || "");
+        const isPasswordMatched = await bcrypt.compare(password, user?.password );
         if (!user || !isPasswordMatched) {
             res.send({ error: true, message: "Invalid username or password" })
         }
 
         else {
-            generateTokenAndSetCookie(user._id, res);
+            // generateTokenAndSetCookie(user._id, res);
 
             res.send({
                 _id: user._id,
@@ -70,7 +73,7 @@ export const login = async (req, res) => {
         }
 
     } catch (error) {
-        console.log("error in login controller", error.message);
+        console.log("error in login controller\n\n\n", error);
         res.send({ error: true, message: "Internal server error" });
     }
 }
