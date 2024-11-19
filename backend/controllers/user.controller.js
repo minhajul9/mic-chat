@@ -21,7 +21,7 @@ export const getConversations = async (req, res) => {
 
         const userId = new ObjectId(req.params.userId);
 
-        console.log(userId);
+        // console.log(userId);
 
         const conversations = await Conversation.find({
             participants: userId
