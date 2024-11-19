@@ -7,13 +7,20 @@ const conversationSchema = new mongoose.Schema({
             ref: "User"
         }
     ],
-    messages: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Message",
-            default: []
-        }
-    ]
+    lastMessageTime: {
+        type: Date,
+    },
+    lastSenderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    lastMessage: {
+        type: String
+    },
+    isRead: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true })
 
 

@@ -21,20 +21,25 @@ export const sendMessage = async (req, res) => {
         const newMessage = new Message({
             senderId,
             receiverId,
+            conversationId: conversation._id,
             message
         })
 
         if (newMessage) {
-            conversation.messages.push(newMessage._id);
-            // await newMessage.save();
-            // await conversation.save();
+
+
+            conversation.isRead = false;
+            conversation.lastMessageTime = new Date.now();
+            conversation.lastMessage = newMessage.message;
+
+            // conversation.save();
         }
 
         await Promise.all([conversation.save(), newMessage.save()])
 
         //socket-io
         const receiverSocketId = getReceiverSocketId(receiverId);
-        if(receiverSocketId){
+        if (receiverSocketId) {
             console.log("new message called")
             io.to(receiverSocketId).emit("newMessage", newMessage)
         }

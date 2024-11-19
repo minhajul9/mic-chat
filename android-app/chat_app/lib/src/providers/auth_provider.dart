@@ -43,9 +43,11 @@ class AuthProvider with ChangeNotifier {
           // logOut();
           // _showAlert('Session Timed Out. Please, login again.', 'warning');
         } else {
-          final decryptedData = decryptData(data['encryptedData']);
-          user = decryptedData;
+          // final decryptedData = decryptData(data['encryptedData']);
+          user = data;
           isLoading = false;
+
+          loadConversations();
           // createJWT(decryptedData);
           notifyListeners();
         }
@@ -84,7 +86,8 @@ class AuthProvider with ChangeNotifier {
         _showAlert(data['message'], 'error');
       } else {
         user = data;
-        // await loadConversations(data['_id']);
+        await createJWT(data);
+        await loadConversations();
 
         notifyListeners();
         return true;
@@ -95,13 +98,41 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> loadConversations() async {
-    print("id\n\n\n\n\n\n\n\n");
+    print("${user!["_id"]}\n\n\n\n\n\n\n\n");
     final response = await http.get(
-      Uri.parse('$serverUrl/api/user/conversations/${user!["_id"]}'),
+      Uri.parse('$serverUrl/api/users/conversations/${user!["_id"]}'),
     );
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       print(data);
+    }
+  }
+
+  Future<void> createJWT(Map<String, dynamic> data) async {
+    // String encryptedData = encryptData({
+    //   '_id': data['_id'],
+    //   'username': data['username'],
+    // }, false);
+
+    print("creating jwt");
+
+    final response = await http.put(
+      Uri.parse('$serverUrl/api/jwt/create'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        '_id': data['_id'],
+        'username': data['username'],
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final jwtData = await jsonDecode(response.body);
+
+      // final decrypted = decryptData(jwtData['encryptedData']);
+      print(jwtData);
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('adda-access-token', jwtData['token']);
     }
   }
 

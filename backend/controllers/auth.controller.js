@@ -1,6 +1,8 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import generateTokenAndSetCookie from "../utils/generateToken.js";
+import generateToken from "../utils/generateToken.js";
+import { getConversations } from "./user.controller.js";
+import { ObjectId } from 'mongodb'
 
 export const signup = async (req, res) => {
     try {
@@ -27,7 +29,7 @@ export const signup = async (req, res) => {
 
         if (newUser) {
             await newUser.save();
-            generateTokenAndSetCookie(newUser._id, res);
+            generateToken(newUser._id, res);
 
             res.status(201).json({
                 _id: newUser._id,
@@ -48,20 +50,17 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
     try {
 
-        console.log(req.body)
-
         const { username, password } = req.body;
 
         const user = await User.findOne({ username });
-        console.log(user);
+        // console.log(user);
 
-        const isPasswordMatched = await bcrypt.compare(password, user?.password );
+        const isPasswordMatched = await bcrypt.compare(password, user?.password);
         if (!user || !isPasswordMatched) {
             res.send({ error: true, message: "Invalid username or password" })
         }
 
         else {
-            // generateTokenAndSetCookie(user._id, res);
 
             res.send({
                 _id: user._id,
@@ -87,5 +86,29 @@ export const logout = (req, res) => {
     } catch (error) {
         console.log("error in logout controller", error.message);
         res.status(500).json({ error: "Internal server error" })
+    }
+}
+
+export const loadUserData = async (req, res) => {
+    try {
+        const id = req.decoded._id;
+
+        const _id = new ObjectId(id);
+        const user = await User.findOne({ _id });
+
+        console.log(user)
+
+        res.send({
+            _id: user._id,
+            fullName: user.fullName,
+            username: user.username,
+            gender: user.gender,
+            profilePic: user.profilePic
+        })
+    } catch (error) {
+
+        console.log(error);
+        res.send({ error: true, message: "Server error." })
+
     }
 }

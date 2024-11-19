@@ -1,5 +1,6 @@
 import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
+import { ObjectId } from 'mongodb';
 
 export const getUsersForSidebar = async (req, res) => {
     try {
@@ -26,10 +27,9 @@ export const getConversations = async (req, res) => {
             participants: userId
         })
 
-        console.log(conversations);
 
         res.send(conversations)
     } catch (error) {
-
+        console.log(error)
     }
 }

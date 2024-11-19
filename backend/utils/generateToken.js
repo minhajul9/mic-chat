@@ -1,15 +1,23 @@
 import jwt from "jsonwebtoken";
+import dotenv from 'dotenv'
+// import { decryptData, encryptData } from "../encryption/encryption.js";
+dotenv.config();
 
-const generateTokenAndSetCookie = (userId, res) => {
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-        expiresIn: '5d'
-    })
+const generateToken = (req, res) => {
+    const accessToken = process.env.JWT_SECRET;
 
-    res.cookie("mic-chat-token", token, {
-        maxAge: 5 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict"
-    })
+    const user = req.body  //decryptData(req.body);
+
+    const token = jwt.sign(
+        user,
+        accessToken,
+        { expiresIn: '24h' });
+
+    // const encryptedToken = encryptData(token);
+
+    console.log(token)
+
+    res.send({token});
 }
 
-export default generateTokenAndSetCookie;
+export default generateToken;

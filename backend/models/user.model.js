@@ -23,8 +23,11 @@ const userSchema = new mongoose.Schema({
     profilePic: {
         type: String,
         default: ""
+    },
+    tcmToken: {
+        type: String
     }
-},{timestamps: true})
+}, { timestamps: true })
 
 const User = mongoose.model("User", userSchema);
 
