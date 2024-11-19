@@ -23,9 +23,40 @@ export const getConversations = async (req, res) => {
 
         // console.log(userId);
 
-        const conversations = await Conversation.find({
-            participants: userId
-        })
+        const conversations = await Conversation.aggregate([
+            {
+                $match: {
+                    participants: userId
+                }
+            },
+            {
+                $unwind: "$participants"
+            },
+            {
+                $match: {
+                    participants: { $ne: userId } // Exclude the requesting user
+                }
+            },
+            {
+                $lookup: {
+                    from: "users", // The name of the users collection
+                    localField: "participants",
+                    foreignField: "_id",
+                    as: "participantDetails"
+                }
+            },
+            {
+                $unwind: "$participantDetails"
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    participants: { $push: "$participantDetails" },
+                    conversationData: { $first: "$$ROOT" }
+                }
+            }
+        ]);
+
 
 
         res.send(conversations)
