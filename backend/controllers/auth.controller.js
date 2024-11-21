@@ -29,7 +29,7 @@ export const signup = async (req, res) => {
 
         if (newUser) {
             await newUser.save();
-            generateToken(newUser._id, res);
+            // generateToken(newUser._id, res);
 
             res.status(201).json({
                 _id: newUser._id,
@@ -109,7 +109,7 @@ export const loadUserData = async (req, res) => {
         })
     } catch (error) {
 
-        console.log(error);
+        console.log("error in load user data",error);
         res.send({ error: true, message: "Server error." })
 
     }

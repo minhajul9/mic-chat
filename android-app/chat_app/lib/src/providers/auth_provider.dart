@@ -45,9 +45,11 @@ class AuthProvider with ChangeNotifier {
         } else {
           // final decryptedData = decryptData(data['encryptedData']);
           user = data;
-          isLoading = false;
 
-          loadConversations();
+          await loadInitialUsers();
+
+          await loadConversations();
+          isLoading = false;
           // createJWT(decryptedData);
           notifyListeners();
         }
@@ -70,24 +72,43 @@ class AuthProvider with ChangeNotifier {
   //       body: json.encode(values));
   // }
 
+  Future<void> loadInitialUsers() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('adda-access-token');
+
+    final response =
+        await http.get(Uri.parse('$serverUrl/api/users'), headers: {
+      "Authorization": "Bearer $token",
+      "ngrok-skip-browser-warning": "69420",
+    });
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      users = data;
+
+      notifyListeners();
+    }
+  }
+
   Future<bool> handleLogin(Map<String, dynamic> values) async {
-    print(values);
     final response = await http.post(
       Uri.parse('$serverUrl/api/auth/login'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(values),
     );
 
-    print("response return ${response.body}");
     if (response.statusCode == 200) {
+      //
       final data = json.decode(response.body);
-      print('data :  $data');
+
       if (data['error'] != null && data['error']) {
+        //
         _showAlert(data['message'], 'error');
       } else {
         user = data;
         await createJWT(data);
         await loadConversations();
+        await loadInitialUsers();
 
         notifyListeners();
         return true;
@@ -98,13 +119,11 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> loadConversations() async {
-    print("${user!["_id"]}\n\n\n\n\n\n\n\n");
     final response = await http.get(
       Uri.parse('$serverUrl/api/users/conversations/${user!["_id"]}'),
     );
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data);
     }
   }
 

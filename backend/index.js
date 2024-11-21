@@ -29,5 +29,5 @@ app.use("/api/users", userRoutes)
 app.use("/api/jwt", jwtRoutes)
 
 app.listen(PORT, async () => {
-
+    console.log("chat server: ", PORT)
 });

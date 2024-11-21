@@ -13,8 +13,28 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool searching = false;
+  AuthProvider authProvider = AuthProvider();
 
-  List<Map<String, dynamic>> searchedUsers = [];
+  List searchedUsers = [];
+
+  void searchUsersFromLoaded(String? value) {
+    if (value == null || value.isEmpty) {
+      setState(() {
+        searchedUsers = [];
+      });
+    } else {
+      List users = authProvider.users
+          .where((item) => item['fullName']
+              .toString()
+              .toLowerCase()
+              .contains(value.toLowerCase()))
+          .toList();
+      setState(() {
+        searchedUsers = users;
+      });
+      print(users);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +92,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {
                           setState(() {
                             searching = false;
+                            searchedUsers = [];
                           });
                         },
                         icon: Icon(
@@ -87,6 +108,9 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.7,
                       child: TextFormField(
+                        onChanged: (value) {
+                          searchUsersFromLoaded(value);
+                        },
                         // controller: passwordController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -136,7 +160,42 @@ class _HomePageState extends State<HomePage> {
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         final user = searchedUsers[index];
-                        return InkWell();
+                        return InkWell(
+                          child: Container(
+                            padding: EdgeInsets.all(5),
+                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                            decoration: BoxDecoration(
+                              border: Border( bottom: BorderSide(color: Color.fromARGB(164, 83, 92, 145), width: 1))
+                            ),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              // mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  padding: EdgeInsets.all(2),
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(user['profilePic']),
+                                    radius: 24,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  user['fullName'],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.white),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
                       }),
                 ),
         ));
