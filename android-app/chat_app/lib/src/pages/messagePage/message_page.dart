@@ -109,8 +109,8 @@ class _MessagePageState extends State<MessagePage> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print("data");
-      print(data);
+      // print("data");
+      // print(data);
       if (data['error'] != null && data['error']) {
         Fluttertoast.showToast(
             msg: data['message'],
@@ -123,7 +123,8 @@ class _MessagePageState extends State<MessagePage> {
         // final decrypted = decryptData(data['encryptedData']);
         setState(() {
           loading = false;
-          // widget.authProvider.messages = decrypted;
+          widget.authProvider.setMessages(data['messages']);
+          widget.authProvider.setSelectedConversation(data['conversation']);
           // WidgetsBinding.instance.addPostFrameCallback((_) {
           //   _scrollToBottom();
           // });
@@ -247,7 +248,7 @@ class _MessagePageState extends State<MessagePage> {
                                   height: 20,
                                 ),
 
-                                //
+                                //send message
                                 TextFormField(
                                   controller: messageController,
                                   validator: (value) {
@@ -256,7 +257,6 @@ class _MessagePageState extends State<MessagePage> {
                                     }
                                     return null;
                                   },
-                                  // obscureText: !showPassword,
                                   decoration: InputDecoration(
                                       filled: true,
                                       fillColor: Colors.white,
@@ -278,51 +278,52 @@ class _MessagePageState extends State<MessagePage> {
                                             SharedPreferences prefs =
                                                 await SharedPreferences
                                                     .getInstance();
-                                            String? token = prefs.getString(
-                                                'blood-bank-access-token');
+                                            String? token = prefs
+                                                .getString('adda-access-token');
 
-                                            String encryptedId = encryptData(
-                                                widget.authProvider.user['id'],
-                                                true);
-                                            String conversationId = encryptData(
-                                                widget.authProvider
-                                                    .selectedConversation['id'],
-                                                true);
+                                            // String encryptedId = encryptData(
+                                            //     widget.authProvider.user['id'],
+                                            //     true);
+                                            // String conversationId = encryptData(
+                                            //     widget.authProvider
+                                            //         .selectedConversation['id'],
+                                            //     true);
 
-                                            String donorId;
+                                            // String donorId;
 
-                                            if (widget.authProvider
-                                                        .selectedConversation[
-                                                    'user1Id'] ==
-                                                widget
-                                                    .authProvider.user['id']) {
-                                              donorId = widget
-                                                  .authProvider
-                                                  .selectedConversation[
-                                                      'user2Id']
-                                                  .toString();
-                                            } else {
-                                              donorId = widget
-                                                  .authProvider
-                                                  .selectedConversation[
-                                                      'user1Id']
-                                                  .toString();
-                                            }
+                                            // if (widget.authProvider
+                                            //             .selectedConversation[
+                                            //         'user1Id'] ==
+                                            //     widget
+                                            //         .authProvider.user['id']) {
+                                            //   donorId = widget
+                                            //       .authProvider
+                                            //       .selectedConversation[
+                                            //           'user2Id']
+                                            //       .toString();
+                                            // } else {
+                                            //   donorId = widget
+                                            //       .authProvider
+                                            //       .selectedConversation[
+                                            //           'user1Id']
+                                            //       .toString();
+                                            // }
 
                                             final messageData = {
                                               'message': messageController.text,
                                               'senderId': widget
-                                                  .authProvider.user['id'],
-                                              'receiverId': donorId,
-                                              'conversationId': widget
-                                                  .authProvider
-                                                  .selectedConversation['id'],
+                                                  .authProvider.user['_id'],
+                                              'receiverId':
+                                                  widget.receiver['_id'],
+                                              // 'conversationId': widget
+                                              //     .authProvider
+                                              //     .selectedConversation!['id'],
                                               'senderName': widget
-                                                  .authProvider.user['name']
+                                                  .authProvider.user['fullName']
                                             };
 
-                                            String encryptedData =
-                                                encryptData(messageData, false);
+                                            // String encryptedData =
+                                            //     encryptData(messageData, false);
 
                                             // final body = {'encryptedData': encryptedData}
 
@@ -330,7 +331,7 @@ class _MessagePageState extends State<MessagePage> {
 
                                             final response = await http.post(
                                                 Uri.parse(
-                                                    '$baseUrl/api/message/sendMessage/$encryptedId/$conversationId'),
+                                                    '$baseUrl/api/messages/sendFirst'),
                                                 headers: {
                                                   'authorization':
                                                       'Bearer $token',
@@ -339,13 +340,15 @@ class _MessagePageState extends State<MessagePage> {
                                                   'content-type':
                                                       'application/json'
                                                 },
-                                                body: json.encode({
-                                                  'encryptedData': encryptedData
-                                                }));
+                                                // body: json.encode({
+                                                //   'encryptedData': encryptedData
+                                                // })
+                                                body: json.encode(messageData));
 
                                             if (response.statusCode == 200) {
                                               final data =
                                                   json.decode(response.body);
+                                              print(data);
                                               if (!data['error']) {
                                                 final decryptedData =
                                                     decryptData(

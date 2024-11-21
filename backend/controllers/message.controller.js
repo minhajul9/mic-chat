@@ -52,6 +52,64 @@ export const sendMessage = async (req, res) => {
         res.status(500).json({ error: true, message: "Internal server error." })
     }
 }
+export const sendFirstMessage = async (req, res) => {
+    try {
+
+        const message = req.body;
+        console.log("sending first message: ", message)
+        const receiverId = message.receiverId;
+        const senderId = req.decoded._id;
+
+        const senderName = message.senderName;
+        delete message.senderName;
+
+        let newConversation = false;
+
+        let conversation = await Conversation.findOne({
+            participants: { $all: [senderId, receiverId] }
+        })
+
+        if (!conversation) {
+            newConversation = true;
+            conversation = await Conversation.create({
+                participants: [senderId, receiverId]
+            })
+        }
+
+        const newMessage = await Message.create({
+            senderId,
+            receiverId,
+            conversationId: conversation._id,
+            message: message.message
+        })
+
+        if (newMessage) {
+
+
+            conversation.isRead = false;
+            conversation.lastMessageTime = new Date();
+            conversation.lastMessage = newMessage.message;
+
+            // conversation.save();
+        }
+
+        await Promise.all([conversation.save(), newMessage.save()])
+
+        //socket-io
+        // const receiverSocketId = getReceiverSocketId(receiverId);
+        // if (receiverSocketId) {
+        //     console.log("new message called")
+        //     io.to(receiverSocketId).emit("newMessage", newMessage)
+        // }
+
+        res.status(201).json({ message: newMessage, conversation })
+
+
+    } catch (error) {
+        console.log("Error from send message controller: ", error.message);
+        res.status(500).json({ error: true, message: "Internal server error." })
+    }
+}
 
 export const getMessages = async (req, res) => {
     try {

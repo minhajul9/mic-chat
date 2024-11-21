@@ -155,7 +155,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  void setSelectedConversations(Map<String, dynamic> data) {
+  void setSelectedConversation(Map<String, dynamic> data) {
     selectedConversation = data;
 
     notifyListeners();
@@ -163,6 +163,11 @@ class AuthProvider with ChangeNotifier {
 
   void setConversations(List data) {
     conversations = data;
+    notifyListeners();
+  }
+
+  void setMessages(List data) {
+    messages = data;
     notifyListeners();
   }
 
