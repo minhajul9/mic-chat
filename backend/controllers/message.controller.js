@@ -52,6 +52,7 @@ export const sendMessage = async (req, res) => {
         res.status(500).json({ error: true, message: "Internal server error." })
     }
 }
+
 export const sendFirstMessage = async (req, res) => {
     try {
 
@@ -102,7 +103,7 @@ export const sendFirstMessage = async (req, res) => {
         //     io.to(receiverSocketId).emit("newMessage", newMessage)
         // }
 
-        res.status(201).json({ message: newMessage, conversation })
+        res.status(201).json({ message: newMessage, conversation, error: false })
 
 
     } catch (error) {
@@ -149,7 +150,7 @@ export const checkMessages = async (req, res) => {
             conversationId: conversation._id
         })
 
-        res.status(200).json({ messages, conversation });
+        res.status(200).json({ messages, conversation, error: false });
     } catch (error) {
         console.log("Error from send message controller: ", error.message);
         res.status(500).json({ error: true, message: "Internal server error." })

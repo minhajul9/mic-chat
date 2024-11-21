@@ -350,14 +350,15 @@ class _MessagePageState extends State<MessagePage> {
                                                   json.decode(response.body);
                                               print(data);
                                               if (!data['error']) {
-                                                final decryptedData =
-                                                    decryptData(
-                                                        data['encryptedData']);
+                                                // final decryptedData =
+                                                //     decryptData(
+                                                //         data['encryptedData']);
                                                 setState(() {
                                                   // messages.insert(0, decryptedData);
                                                   widget.authProvider
                                                       .setMessages([
-                                                    decryptedData,
+                                                    // decryptedData,
+                                                    data['message'],
                                                     ...widget
                                                         .authProvider.messages
                                                   ]);
