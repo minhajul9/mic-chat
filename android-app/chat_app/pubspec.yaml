@@ -39,6 +39,7 @@ dependencies:
   path: ^1.9.0
   crypto: ^3.0.2
   encrypt: ^5.0.1
+  chat_bubbles: ^1.6.0
 
 
   # The following adds the Cupertino Icons font to your application.

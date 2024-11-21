@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:chat_app/src/pages/messagePage/message_page.dart';
 import 'package:chat_app/src/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         searchedUsers = users;
       });
-      print(users);
     }
   }
 
@@ -161,12 +161,29 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (context, index) {
                         final user = searchedUsers[index];
                         return InkWell(
+                          onTap: () {
+                            print(user);
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MessagePage(
+                                          authProvider: authProvider,
+                                          from: "search",
+                                          receiver: user,
+                                          conversation: {
+                                            'participants': [user["_id"], authProvider.user!['_id']],
+                                          },
+                                        )));
+                          },
                           child: Container(
                             padding: EdgeInsets.all(5),
-                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 10),
                             decoration: BoxDecoration(
-                              border: Border( bottom: BorderSide(color: Color.fromARGB(164, 83, 92, 145), width: 1))
-                            ),
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: Color.fromARGB(164, 83, 92, 145),
+                                        width: 1))),
                             width: MediaQuery.of(context).size.width * 0.8,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,

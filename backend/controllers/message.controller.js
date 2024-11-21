@@ -49,7 +49,7 @@ export const sendMessage = async (req, res) => {
 
     } catch (error) {
         console.log("Error from send message controller: ", error.message);
-        res.status(500).json({ error: "Internal server error." })
+        res.status(500).json({ error: true, message: "Internal server error." })
     }
 }
 
@@ -70,6 +70,30 @@ export const getMessages = async (req, res) => {
         res.status(200).json(conversation?.messages);
     } catch (error) {
         console.log("Error from send message controller: ", error.message);
-        res.status(500).json({ error: "Internal server error." })
+        res.status(500).json({ error: true, message: "Internal server error." })
+    }
+}
+
+export const checkMessages = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+        const senderId = req.decoded._id;
+
+        const conversation = await Conversation.findOne({
+            participants: {
+                $all: [senderId, id]
+            }
+        })
+
+        if (!conversation) return res.status(200).json({ messages: [] });
+        const messages = await Message.find({
+            conversationId: conversation._id
+        })
+
+        res.status(200).json({ messages, conversation });
+    } catch (error) {
+        console.log("Error from send message controller: ", error.message);
+        res.status(500).json({ error: true, message: "Internal server error." })
     }
 }

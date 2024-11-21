@@ -155,6 +155,17 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  void setSelectedConversations(Map<String, dynamic> data) {
+    selectedConversation = data;
+
+    notifyListeners();
+  }
+
+  void setConversations(List data) {
+    conversations = data;
+    notifyListeners();
+  }
+
   void _showAlert(String message, String type) {
     Fluttertoast.showToast(
         msg: message,
