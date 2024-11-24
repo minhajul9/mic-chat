@@ -53,7 +53,6 @@ export const login = async (req, res) => {
         const { username, password } = req.body;
 
         const user = await User.findOne({ username });
-        console.log(user);
 
         const isPasswordMatched = await bcrypt.compare(password, user?.password);
         if (!user || !isPasswordMatched) {
@@ -93,12 +92,8 @@ export const loadUserData = async (req, res) => {
     try {
         const id = req.decoded._id;
 
-        console.log("Loading data of :", id)
-
         const _id = new ObjectId(id);
         const user = await User.findById(id).lean();
-
-        console.log(user)
 
         res.send({
             _id: user._id,

@@ -150,7 +150,66 @@ class _HomePageState extends State<HomePage> {
                               itemBuilder: (context, index) {
                                 final conversation =
                                     authProvider.conversations[index];
-                                return InkWell();
+
+                                // print(conversation);
+                                return InkWell(
+                                  onTap: () {
+                                    authProvider
+                                        .setSelectedConversation(conversation);
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => MessagePage(
+                                                  authProvider: authProvider,
+                                                  from: "home",
+                                                  receiver: conversation[
+                                                      "participants"][0],
+                                                  conversation: conversation,
+                                                )));
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(5),
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 10),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                color: Color.fromARGB(
+                                                    164, 83, 92, 145),
+                                                width: 1))),
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      // mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 60,
+                                          height: 60,
+                                          padding: EdgeInsets.all(2),
+                                          child: CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                conversation["participants"][0]
+                                                    ['profilePic']),
+                                            radius: 24,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          conversation["participants"][0]
+                                              ['fullName'],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Colors.white),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
                               })),
                 )
               : Container(
@@ -159,19 +218,21 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        final user = searchedUsers[index];
+                        final receiver = searchedUsers[index];
                         return InkWell(
                           onTap: () {
-                            print(user);
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => MessagePage(
                                           authProvider: authProvider,
                                           from: "search",
-                                          receiver: user,
+                                          receiver: receiver,
                                           conversation: {
-                                            'participants': [user["_id"], authProvider.user!['_id']],
+                                            'participants': [
+                                              receiver["_id"],
+                                              authProvider.user!['_id']
+                                            ],
                                           },
                                         )));
                           },
@@ -195,7 +256,7 @@ class _HomePageState extends State<HomePage> {
                                   padding: EdgeInsets.all(2),
                                   child: CircleAvatar(
                                     backgroundImage:
-                                        NetworkImage(user['profilePic']),
+                                        NetworkImage(receiver['profilePic']),
                                     radius: 24,
                                   ),
                                 ),
@@ -203,7 +264,7 @@ class _HomePageState extends State<HomePage> {
                                   width: 10,
                                 ),
                                 Text(
-                                  user['fullName'],
+                                  receiver['fullName'],
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,

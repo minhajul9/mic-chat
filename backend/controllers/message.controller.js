@@ -1,16 +1,17 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
+import { ObjectId } from 'mongodb'
 
 export const sendMessage = async (req, res) => {
     try {
-        const { message } = req.body;
-        const receiverId = req.params.id;
-        const senderId = req.user._id
+        const message = req.body;
+        const conversationId = req.params.id;
+        const senderId = req.decoded._id
+        const receiverId = message.receiverId;
 
-        let conversation = await Conversation.findOne({
-            participants: { $all: [senderId, receiverId] }
-        })
+        let conversation = await Conversation.findById(conversationId)
+        console.log(conversation)
 
         if (!conversation) {
             conversation = await Conversation.create({
@@ -40,11 +41,10 @@ export const sendMessage = async (req, res) => {
         //socket-io
         const receiverSocketId = getReceiverSocketId(receiverId);
         if (receiverSocketId) {
-            console.log("new message called")
             io.to(receiverSocketId).emit("newMessage", newMessage)
         }
 
-        res.status(201).json(newMessage)
+        res.status(201).json({ message: newMessage, conversation, error: false })
 
 
     } catch (error) {
@@ -103,30 +103,32 @@ export const sendFirstMessage = async (req, res) => {
         //     io.to(receiverSocketId).emit("newMessage", newMessage)
         // }
 
-        res.status(201).json({ message: newMessage, conversation, error: false })
+        res.json({ message: newMessage, conversation, error: false })
 
 
     } catch (error) {
         console.log("Error from send message controller: ", error.message);
-        res.status(500).json({ error: true, message: "Internal server error." })
+        res.json({ error: true, message: "Internal server error." })
     }
 }
 
 export const getMessages = async (req, res) => {
     try {
 
-        const { id: userToChatId } = req.params;
-        const senderId = req.user._id;
+        let messages;
 
-        const conversation = await Conversation.findOne({
-            participants: {
-                $all: [senderId, userToChatId]
-            }
-        }).populate('messages')
+        const conversationId = new ObjectId(req.params.id);
+        const conversation = await Conversation.findById(conversationId);
+        // console.log(conversation);
 
-        if (!conversation) return res.status(200).json([]);
+        if (!conversation) return res.status(200).json({ error: false, messages: [] });
 
-        res.status(200).json(conversation?.messages);
+        else {
+            messages = await Message.find({ conversationId: conversationId });
+            // console.log(messages);
+        }
+
+        res.status(200).json({ error: false, messages });
     } catch (error) {
         console.log("Error from send message controller: ", error.message);
         res.status(500).json({ error: true, message: "Internal server error." })
@@ -145,7 +147,7 @@ export const checkMessages = async (req, res) => {
             }
         })
 
-        if (!conversation) return res.status(200).json({ messages: [] });
+        if (!conversation) return res.status(200).json({ messages: [], conversation: null });
         const messages = await Message.find({
             conversationId: conversation._id
         })

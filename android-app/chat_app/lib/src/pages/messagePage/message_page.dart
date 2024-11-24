@@ -51,13 +51,14 @@ class _MessagePageState extends State<MessagePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('adda-access-token');
 
-    String encryptedId = encryptData(widget.authProvider.user['_id'], true);
-    String conversationId =
-        encryptData(widget.authProvider.selectedConversation['_id'], true);
+    // String encryptedId = encryptData(widget.authProvider.user['_id'], true);
+    // String conversationId =
+    //     encryptData(widget.authProvider.selectedConversation['_id'], true);
+    print(widget.authProvider.selectedConversation['_id']);
 
     final response = await http.get(
         Uri.parse(
-            '$baseUrl/api/message/getMessages/$encryptedId/$conversationId'),
+            '$baseUrl/api/messages/getMessages/${widget.authProvider.selectedConversation['_id']}'),
         headers: {
           'authorization': 'Bearer $token',
           'ngrok-skip-browser-warning': '49420'
@@ -74,10 +75,11 @@ class _MessagePageState extends State<MessagePage> {
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
-        final decrypted = decryptData(data['encryptedData']);
+        // final decrypted = decryptData(data['encryptedData']);
+        print(data['messages'][0]);
         setState(() {
           loading = false;
-          widget.authProvider.messages = decrypted;
+          widget.authProvider.messages = data['messages'];
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _scrollToBottom();
           });
@@ -91,14 +93,8 @@ class _MessagePageState extends State<MessagePage> {
       loading = true;
     });
 
-    print('check message\n\n\n\n\n\n\n\n\n');
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('adda-access-token');
-
-    // String encryptedId = encryptData(widget.authProvider.user['_id'], true);
-    // String conversationId =
-    //     encryptData(widget.authProvider.selectedConversation['_id'], true);
 
     final response = await http.get(
         Uri.parse('$baseUrl/api/messages/check/${widget.receiver['_id']}'),
@@ -109,8 +105,7 @@ class _MessagePageState extends State<MessagePage> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      // print("data");
-      // print(data);
+
       if (data['error'] != null && data['error']) {
         Fluttertoast.showToast(
             msg: data['message'],
@@ -120,11 +115,10 @@ class _MessagePageState extends State<MessagePage> {
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
-        // final decrypted = decryptData(data['encryptedData']);
+        widget.authProvider.setMessages(data['messages']);
+        widget.authProvider.setSelectedConversation(data['conversation']);
         setState(() {
           loading = false;
-          widget.authProvider.setMessages(data['messages']);
-          widget.authProvider.setSelectedConversation(data['conversation']);
           // WidgetsBinding.instance.addPostFrameCallback((_) {
           //   _scrollToBottom();
           // });
@@ -152,11 +146,9 @@ class _MessagePageState extends State<MessagePage> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => {
-              // widget.authProvider.setSelectedConversation(null, -1),
-              // widget.authProvider.setMessages([]),
-              // widget.authProvider.updateUser({
-              //   'unreadMessageCount':
-              //       widget.authProvider.user['unreadMessageCount'] - readCount
+              widget.authProvider.setSelectedConversation(null),
+              widget.authProvider.setMessages([]),
+
               // }),
               Navigator.pushReplacement(
                   context, MaterialPageRoute(builder: (context) => HomePage()))
@@ -225,7 +217,7 @@ class _MessagePageState extends State<MessagePage> {
                                         final message =
                                             widget.authProvider.messages[index];
                                         bool isSender =
-                                            widget.authProvider.user['id'] ==
+                                            widget.authProvider.user['_id'] ==
                                                 message['senderId'];
 
                                         return Container(
@@ -281,98 +273,152 @@ class _MessagePageState extends State<MessagePage> {
                                             String? token = prefs
                                                 .getString('adda-access-token');
 
-                                            // String encryptedId = encryptData(
-                                            //     widget.authProvider.user['id'],
-                                            //     true);
-                                            // String conversationId = encryptData(
-                                            //     widget.authProvider
-                                            //         .selectedConversation['id'],
-                                            //     true);
-
-                                            // String donorId;
-
-                                            // if (widget.authProvider
-                                            //             .selectedConversation[
-                                            //         'user1Id'] ==
-                                            //     widget
-                                            //         .authProvider.user['id']) {
-                                            //   donorId = widget
-                                            //       .authProvider
-                                            //       .selectedConversation[
-                                            //           'user2Id']
-                                            //       .toString();
-                                            // } else {
-                                            //   donorId = widget
-                                            //       .authProvider
-                                            //       .selectedConversation[
-                                            //           'user1Id']
-                                            //       .toString();
-                                            // }
-
                                             final messageData = {
                                               'message': messageController.text,
                                               'senderId': widget
                                                   .authProvider.user['_id'],
                                               'receiverId':
                                                   widget.receiver['_id'],
-                                              // 'conversationId': widget
-                                              //     .authProvider
-                                              //     .selectedConversation!['id'],
+                                              'conversationId': widget
+                                                  .authProvider
+                                                  .selectedConversation?['id'],
                                               'senderName': widget
                                                   .authProvider.user['fullName']
                                             };
 
-                                            // String encryptedData =
-                                            //     encryptData(messageData, false);
+                                            // if no conversation found
+                                            if (authProvider
+                                                    .selectedConversation ==
+                                                null) {
+                                              final response = await http.post(
+                                                  Uri.parse(
+                                                      '$baseUrl/api/messages/sendFirst'),
+                                                  headers: {
+                                                    'authorization':
+                                                        'Bearer $token',
+                                                    'ngrok-skip-browser-warning':
+                                                        '49420',
+                                                    'content-type':
+                                                        'application/json'
+                                                  },
+                                                  body:
+                                                      json.encode(messageData));
 
-                                            // final body = {'encryptedData': encryptedData}
+                                              if (response.statusCode == 200) {
+                                                final data =
+                                                    json.decode(response.body);
 
-                                            // print(messageData);
-
-                                            final response = await http.post(
-                                                Uri.parse(
-                                                    '$baseUrl/api/messages/sendFirst'),
-                                                headers: {
-                                                  'authorization':
-                                                      'Bearer $token',
-                                                  'ngrok-skip-browser-warning':
-                                                      '49420',
-                                                  'content-type':
-                                                      'application/json'
-                                                },
-                                                // body: json.encode({
-                                                //   'encryptedData': encryptedData
-                                                // })
-                                                body: json.encode(messageData));
-
-                                            if (response.statusCode == 200) {
-                                              final data =
-                                                  json.decode(response.body);
-                                              print(data);
-                                              if (!data['error']) {
-                                                // final decryptedData =
-                                                //     decryptData(
-                                                //         data['encryptedData']);
-                                                setState(() {
-                                                  // messages.insert(0, decryptedData);
+                                                if (!data['error']) {
                                                   widget.authProvider
                                                       .setMessages([
-                                                    // decryptedData,
                                                     data['message'],
                                                     ...widget
                                                         .authProvider.messages
                                                   ]);
+
+                                                  final newConversation =
+                                                      data['conversation'];
+                                                  newConversation[
+                                                      "participants"] = [
+                                                    widget.receiver
+                                                  ];
+
+                                                  authProvider
+                                                      .setConversations([
+                                                    newConversation,
+                                                    ...authProvider
+                                                        .conversations
+                                                  ]);
+
+                                                  authProvider
+                                                      .setSelectedConversation(
+                                                          newConversation);
                                                   messageController.text = '';
-                                                });
-                                                WidgetsBinding.instance
-                                                    .addPostFrameCallback((_) {
-                                                  _scrollToBottom();
-                                                });
+
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) {
+                                                    _scrollToBottom();
+                                                  });
+                                                }
+                                              }
+                                            }
+
+                                            //if conversation exist
+                                            else {
+                                              final response = await http.post(
+                                                  Uri.parse(
+                                                      '$baseUrl/api/messages/send/${authProvider.selectedConversation!["_id"]}'),
+                                                  headers: {
+                                                    'authorization':
+                                                        'Bearer $token',
+                                                    'ngrok-skip-browser-warning':
+                                                        '49420',
+                                                    'content-type':
+                                                        'application/json'
+                                                  },
+                                                  body:
+                                                      json.encode(messageData));
+
+                                              if (response.statusCode == 200) {
+                                                final data =
+                                                    json.decode(response.body);
+
+                                                if (!data['error']) {
+                                                  //
+                                                  //
+                                                  widget.authProvider
+                                                      .setMessages([
+                                                    data['message'],
+                                                    ...widget
+                                                        .authProvider.messages
+                                                  ]);
+
+                                                  //
+                                                  final index = authProvider
+                                                      .conversations
+                                                      .indexWhere((item) =>
+                                                          item['_id']
+                                                              .toString() ==
+                                                          data['message'][
+                                                              'conversationId']);
+
+                                                  authProvider.conversations
+                                                      .removeAt(index);
+
+                                                  //
+                                                  final updatedConversation =
+                                                      authProvider
+                                                          .selectedConversation;
+
+                                                  updatedConversation![
+                                                          'isRead'] =
+                                                      data["conversation"]
+                                                          ['isRead'];
+                                                  updatedConversation[
+                                                          "lastMessageTime"] =
+                                                      data["conversation"]
+                                                          ["lastMessageTime"];
+                                                  updatedConversation[
+                                                          "lastMessage"] =
+                                                      data["conversation"]
+                                                          ["lastMessage"];
+
+                                                  authProvider
+                                                      .setSelectedConversation(
+                                                          updatedConversation);
+                                                  messageController.text = '';
+
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) {
+                                                    _scrollToBottom();
+                                                  });
+                                                }
                                               }
                                             }
 
                                             setState(() {
-                                              // showPassword = !showPassword;
                                               sendingMessage = false;
                                             });
                                           }

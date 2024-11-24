@@ -124,6 +124,9 @@ class AuthProvider with ChangeNotifier {
     );
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+      conversations = data;
+
+      notifyListeners();
     }
   }
 
@@ -155,7 +158,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  void setSelectedConversation(Map<String, dynamic> data) {
+  void setSelectedConversation(Map<String, dynamic>? data) {
     selectedConversation = data;
 
     notifyListeners();
@@ -167,6 +170,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   void setMessages(List data) {
+    print("setting messages");
     messages = data;
     notifyListeners();
   }

@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/send/:id", protectRoute, sendMessage)
 router.post("/sendFirst", protectRoute, sendFirstMessage)
-router.get("/:id", protectRoute, getMessages)
+router.get("/getMessages/:id", protectRoute, getMessages)
 router.get("/check/:id", protectRoute, checkMessages)
 
 export default router;
