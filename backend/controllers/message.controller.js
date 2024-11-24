@@ -30,7 +30,7 @@ export const sendMessage = async (req, res) => {
 
 
             conversation.isRead = false;
-            conversation.lastMessageTime = new Date.now();
+            conversation.lastMessageTime = new Date();
             conversation.lastMessage = newMessage.message;
 
             // conversation.save();

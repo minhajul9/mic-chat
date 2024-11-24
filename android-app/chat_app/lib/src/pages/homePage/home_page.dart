@@ -173,7 +173,6 @@ class _HomePageState extends State<HomePage> {
                         onTap: () async {
                           if (item['route'] == 'logout') {
                             await authProvider.logOut();
-                            Navigator.pushReplacementNamed(context, '/login');
                           } else {
                             scaffoldKey.currentState?.openEndDrawer();
                             // Navigator.pushNamed(context, item['route']!);

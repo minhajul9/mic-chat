@@ -49,7 +49,7 @@ class AuthProvider with ChangeNotifier {
           await loadInitialUsers();
 
           await loadConversations();
-          isLoading = false;
+          setIsLoading(false);
           // createJWT(decryptedData);
           notifyListeners();
         }
@@ -58,7 +58,7 @@ class AuthProvider with ChangeNotifier {
       user = null;
     }
 
-    isLoading = false;
+    setIsLoading(false);
 
     notifyListeners();
   }
@@ -71,6 +71,12 @@ class AuthProvider with ChangeNotifier {
   //       },
   //       body: json.encode(values));
   // }
+
+  void setIsLoading(bool value) {
+    isLoading = value;
+
+    notifyListeners();
+  }
 
   Future<void> loadInitialUsers() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -91,7 +97,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> handleLogin(Map<String, dynamic> values) async {
-    isLoading = true;
+    setIsLoading(true);
 
     final response = await http.post(
       Uri.parse('$serverUrl/api/auth/login'),
@@ -112,12 +118,12 @@ class AuthProvider with ChangeNotifier {
         await loadConversations();
         await loadInitialUsers();
 
-        isLoading = false;
+       setIsLoading(false);
         notifyListeners();
         return true;
       }
     }
-    isLoading = false;
+    setIsLoading(false);
     return false;
   }
 
@@ -159,6 +165,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   void setSelectedConversation(Map<String, dynamic>? data) {
+    print(data);
     selectedConversation = data;
 
     notifyListeners();
@@ -189,7 +196,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logOut() async {
-    isLoading = true;
+    setIsLoading(true);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('adda-access-token');
@@ -205,7 +212,7 @@ class AuthProvider with ChangeNotifier {
         prefs.remove('adda-access-token');
         user = null;
 
-        isLoading = false;
+        setIsLoading(false);
 
         notifyListeners();
       }

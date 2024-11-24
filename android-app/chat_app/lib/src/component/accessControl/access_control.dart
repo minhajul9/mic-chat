@@ -12,15 +12,15 @@ class AuthCheck extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
         builder: (context, authProvider, childWidget) {
+      if (authProvider.isLoading) {
+        return BlinkingLogoPage();
+      }
+
       if (authProvider.user == null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.microtask(() {
           Navigator.pushReplacementNamed(context, '/login');
         });
         return const SizedBox.shrink(); // Prevent rendering invalid content
-      }
-
-      if (authProvider.isLoading) {
-        return BlinkingLogoPage();
       }
 
       return child;
