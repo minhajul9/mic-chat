@@ -91,6 +91,8 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> handleLogin(Map<String, dynamic> values) async {
+    isLoading = true;
+
     final response = await http.post(
       Uri.parse('$serverUrl/api/auth/login'),
       headers: {'Content-Type': 'application/json'},
@@ -110,11 +112,12 @@ class AuthProvider with ChangeNotifier {
         await loadConversations();
         await loadInitialUsers();
 
+        isLoading = false;
         notifyListeners();
         return true;
       }
     }
-
+    isLoading = false;
     return false;
   }
 
@@ -136,7 +139,6 @@ class AuthProvider with ChangeNotifier {
     //   'username': data['username'],
     // }, false);
 
-    print("creating jwt");
 
     final response = await http.put(
       Uri.parse('$serverUrl/api/jwt/create'),
@@ -151,7 +153,6 @@ class AuthProvider with ChangeNotifier {
       final jwtData = await jsonDecode(response.body);
 
       // final decrypted = decryptData(jwtData['encryptedData']);
-      print(jwtData);
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('adda-access-token', jwtData['token']);
@@ -188,8 +189,28 @@ class AuthProvider with ChangeNotifier {
         fontSize: 16.0);
   }
 
-  void logOut() async {
-    final response = 
+  Future<void> logOut() async {
+    isLoading = true;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('adda-access-token');
+
+    final response = await http.post(Uri.parse('$serverUrl/api/auth/logout'),
+        headers: {'Authorization': 'Bearer $token'});
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['error']) {
+        _showAlert(data['message'], 'error');
+      } else {
+        user = null;
+        prefs.remove('adda-access-token');
+
+        isLoading = false;
+
+        notifyListeners();
+      }
+    }
   }
 }
 

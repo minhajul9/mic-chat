@@ -79,16 +79,16 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
 
-        const id = req.params.id;
+        const id = req.decoded._id;
         const user = await User.findById(id);
 
         user.fcmToken = '';
         await user.save();
-        res.status(200).json({ message: "Logged out successfully." })
+        res.status(200).json({ error: false, message: "Logged out successfully." })
 
     } catch (error) {
         console.log("error in logout controller", error.message);
-        res.status(500).json({ error: "Internal server error" })
+        res.status(500).json({ error: true, message: "Internal server error" })
     }
 }
 

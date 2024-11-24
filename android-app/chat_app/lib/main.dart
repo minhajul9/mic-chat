@@ -1,6 +1,8 @@
+import 'package:chat_app/src/component/accessControl/access_control.dart';
 import 'package:chat_app/src/component/blinking_logo.dart';
 import 'package:chat_app/src/pages/homePage/home_page.dart';
 import 'package:chat_app/src/pages/loginPage/login_page.dart';
+import 'package:chat_app/src/pages/registerPage/registration_page.dart';
 import 'package:chat_app/src/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,12 +28,12 @@ class MyApp extends StatelessWidget {
               seedColor: const Color.fromARGB(255, 7, 15, 58)),
           useMaterial3: true,
         ),
-        home: Consumer<AuthProvider>(
-          builder: (context, authProvider, child) => authProvider.isLoading
-              ? const BlinkingLogoPage()
-              : authProvider.user != null
-                  ? HomePage()
-                  : LoginPage(),
-        ));
+        home: AuthCheck(child: HomePage()),
+        routes: {
+          '/home': (context) => AuthCheck(child: HomePage()),
+          '/login': (context) => LoginPage(),
+          '/register': (context) => RegistrationPage(),
+          // '/settings': (context) => AccountSetting(),
+        });
   }
 }
