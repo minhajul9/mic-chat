@@ -76,10 +76,14 @@ export const login = async (req, res) => {
     }
 }
 
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
     try {
 
-        res.cookie("mic-chat-token", "", { maxAge: 0 });
+        const id = req.params.id;
+        const user = await User.findById(id);
+
+        user.fcmToken = '';
+        await user.save();
         res.status(200).json({ message: "Logged out successfully." })
 
     } catch (error) {
@@ -104,7 +108,7 @@ export const loadUserData = async (req, res) => {
         })
     } catch (error) {
 
-        console.log("error in load user data",error);
+        console.log("error in load user data", error);
         res.send({ error: true, message: "Server error." })
 
     }

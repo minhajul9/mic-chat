@@ -15,8 +15,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool searching = false;
   AuthProvider authProvider = AuthProvider();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   List searchedUsers = [];
+  final List<Map<String, dynamic>> menuItems = [
+    {'title': '', 'route': '/settings', 'icon': Icons.logout},
+  ];
 
   void searchUsersFromLoaded(String? value) {
     if (value == null || value.isEmpty) {
@@ -39,8 +43,28 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldKey,
         appBar: AppBar(
           toolbarHeight: 78,
+          leading: !searching
+              ? IconButton(
+                  onPressed: () => scaffoldKey.currentState?.openDrawer(),
+                  color: Colors.white,
+                  icon: Icon(
+                    Icons.menu,
+                  ))
+              : IconButton(
+                  onPressed: () {
+                    setState(() {
+                      searching = false;
+                      searchedUsers = [];
+                    });
+                  },
+                  icon: Icon(
+                    Icons.arrow_back,
+                    size: 35,
+                    color: Colors.white,
+                  )),
           title: !searching
               ?
               //conversation navbar
@@ -50,13 +74,6 @@ class _HomePageState extends State<HomePage> {
                     Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.menu,
-                              size: 35,
-                              color: Colors.white,
-                            )),
                         SizedBox(
                           width: 10,
                         ),
@@ -88,18 +105,6 @@ class _HomePageState extends State<HomePage> {
               Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            searching = false;
-                            searchedUsers = [];
-                          });
-                        },
-                        icon: Icon(
-                          Icons.arrow_back,
-                          size: 35,
-                          color: Colors.white,
-                        )),
                     SizedBox(
                       width: 10,
                     ),
@@ -138,6 +143,39 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Color.fromARGB(255, 146, 144, 195),
         ),
         backgroundColor: Color.fromARGB(255, 7, 15, 43),
+        drawer: Drawer(
+          child: ListView(children: [
+            DrawerHeader(
+                child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage: NetworkImage(
+                    authProvider.user!['profilePic'],
+                  ),
+                  onBackgroundImageError: (_, __) => Icon(Icons.account_circle,
+                      size: 40), // Fallback if image fails to load
+                ),
+                SizedBox(width: 8),
+                Text(
+                  authProvider.user!['fullName'],
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                )
+              ],
+            )),
+            ...menuItems
+                .map((item) => ListTile(
+                      leading: Icon(item['icon']),
+                      onTap: () {
+                        scaffoldKey.currentState?.openEndDrawer();
+                        Navigator.pushNamed(context, item['route']!);
+                      },
+                      title: Text(item['title']!),
+                    ))
+                .toList(),
+          ]),
+        ),
         body: SingleChildScrollView(
           child: !searching
               ? Container(

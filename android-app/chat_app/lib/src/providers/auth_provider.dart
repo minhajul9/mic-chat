@@ -170,7 +170,6 @@ class AuthProvider with ChangeNotifier {
   }
 
   void setMessages(List data) {
-    print("setting messages");
     messages = data;
     notifyListeners();
   }
@@ -187,6 +186,10 @@ class AuthProvider with ChangeNotifier {
                 : Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
+  }
+
+  void logOut() async {
+    final response = 
   }
 }
 
