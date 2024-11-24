@@ -152,12 +152,12 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: NetworkImage(
-                      authProvider.user!['profilePic'],
-                    ),
-                    onBackgroundImageError: (_, __) => Icon(
-                        Icons.account_circle,
-                        size: 40), // Fallback if image fails to load
+                    backgroundImage: authProvider.user != null
+                        ? NetworkImage(
+                            authProvider.user?['profilePic'] ??
+                                Icon(Icons.account_circle, size: 40),
+                          )
+                        : null,
                   ),
                   SizedBox(width: 8),
                   Text(
@@ -171,11 +171,9 @@ class _HomePageState extends State<HomePage> {
                   .map((item) => ListTile(
                         leading: Icon(item['icon']),
                         onTap: () async {
-                          print(item['route']);
                           if (item['route'] == 'logout') {
                             await authProvider.logOut();
-                            print("after logout");
-                            print(authProvider.user);
+                            Navigator.pushReplacementNamed(context, '/login');
                           } else {
                             scaffoldKey.currentState?.openEndDrawer();
                             // Navigator.pushNamed(context, item['route']!);

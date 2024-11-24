@@ -53,21 +53,27 @@ export const login = async (req, res) => {
         const { username, password } = req.body;
 
         const user = await User.findOne({ username });
-
-        const isPasswordMatched = await bcrypt.compare(password, user?.password);
-        if (!user || !isPasswordMatched) {
+        if (!user) {
             res.send({ error: true, message: "Invalid username or password" })
         }
 
         else {
+            const isPasswordMatched = await bcrypt.compare(password, user?.password);
+            if (!user || !isPasswordMatched) {
+                res.send({ error: true, message: "Invalid username or password" })
+            }
+            else {
 
-            res.send({
-                _id: user._id,
-                fullName: user.fullName,
-                username: user.username,
-                gender: user.gender,
-                profilePic: user.profilePic
-            })
+                res.send({
+                    _id: user._id,
+                    fullName: user.fullName,
+                    username: user.username,
+                    gender: user.gender,
+                    profilePic: user.profilePic
+                })
+            }
+
+
         }
 
     } catch (error) {

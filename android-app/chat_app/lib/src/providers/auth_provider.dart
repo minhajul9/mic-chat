@@ -139,7 +139,6 @@ class AuthProvider with ChangeNotifier {
     //   'username': data['username'],
     // }, false);
 
-
     final response = await http.put(
       Uri.parse('$serverUrl/api/jwt/create'),
       headers: {'Content-Type': 'application/json'},
@@ -203,8 +202,8 @@ class AuthProvider with ChangeNotifier {
       if (data['error']) {
         _showAlert(data['message'], 'error');
       } else {
-        user = null;
         prefs.remove('adda-access-token');
+        user = null;
 
         isLoading = false;
 

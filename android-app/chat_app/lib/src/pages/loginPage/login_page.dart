@@ -121,11 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                                 });
 
                                 if (status) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomePage()),
-                                  );
+                                  Navigator.pushReplacementNamed(context, '/home');;
                                 } else {
                                   setState(() {
                                     isLoading = false;
