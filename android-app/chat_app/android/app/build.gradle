@@ -1,3 +1,16 @@
+buildscript {
+    ext.kotlin_version = '1.8.22' // Set your desired Kotlin version
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.0.2" // Update to the appropriate Gradle plugin version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // Use the defined Kotlin version
+        classpath "com.google.gms:google-services:4.3.15"
+    }
+}
+
 plugins {
     id "com.android.application"
     id "kotlin-android"
@@ -39,6 +52,13 @@ android {
     }
 }
 
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:33.5.1')
+    implementation 'com.google.firebase:firebase-messaging'
+}
+
 flutter {
     source = "../.."
 }
+
+apply plugin: 'com.google.gms.google-services'

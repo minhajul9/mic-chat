@@ -32,6 +32,7 @@ export const sendMessage = async (req, res) => {
             conversation.isRead = false;
             conversation.lastMessageTime = new Date();
             conversation.lastMessage = newMessage.message;
+            conversation.lastSenderId = senderId;
 
             // conversation.save();
         }
@@ -90,18 +91,12 @@ export const sendFirstMessage = async (req, res) => {
             conversation.isRead = false;
             conversation.lastMessageTime = new Date();
             conversation.lastMessage = newMessage.message;
+            conversation.lastSenderId = senderId;
 
             // conversation.save();
         }
 
         await Promise.all([conversation.save(), newMessage.save()])
-
-        //socket-io
-        // const receiverSocketId = getReceiverSocketId(receiverId);
-        // if (receiverSocketId) {
-        //     console.log("new message called")
-        //     io.to(receiverSocketId).emit("newMessage", newMessage)
-        // }
 
         res.json({ message: newMessage, conversation, error: false })
 

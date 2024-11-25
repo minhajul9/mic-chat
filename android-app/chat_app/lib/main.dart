@@ -4,10 +4,34 @@ import 'package:chat_app/src/pages/homePage/home_page.dart';
 import 'package:chat_app/src/pages/loginPage/login_page.dart';
 import 'package:chat_app/src/pages/registerPage/registration_page.dart';
 import 'package:chat_app/src/providers/auth_provider.dart';
+import 'package:chat_app/src/services/notification_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void requestNotificationPermission() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+}
+
+void main() async {
+  //initialize firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  //permission for push notification
+  requestNotificationPermission();
+
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
     child: MyApp(),
@@ -17,10 +41,12 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    NotificationService(authProvider, context).initialize();
+
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

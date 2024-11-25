@@ -4,8 +4,8 @@ import User from "../models/user.model.js";
 const protectRoute = async (req, res, next) => {
     const authorization = req.headers.authorization;
 
-    console.log('from protect route')
-    
+
+
     if (!authorization) {
         return res.status(401).send({ timeOut: true, error: true, message: 'unauthorized access' });
     }
@@ -17,7 +17,7 @@ const protectRoute = async (req, res, next) => {
             return res.send({ timeOut: true, error: true, message: 'Session Time out.' });
         }
 
-        console.log("no error with token")
+
         req.decoded = decoded;
         next();
     })
