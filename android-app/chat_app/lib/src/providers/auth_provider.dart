@@ -63,14 +63,35 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> handleRegistration(Map<String, dynamic> values) async {
-  //   final response = await http.post(Uri.parse('$serverUrl/api/auth/signup'),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         "ngrok-skip-browser-warning": "69420",
-  //       },
-  //       body: json.encode(values));
-  // }
+  Future<bool> handleRegistration(Map<String, dynamic> values) async {
+    final response = await http.post(Uri.parse('$serverUrl/api/auth/signup'),
+        headers: {
+          'Content-Type': 'application/json',
+          "ngrok-skip-browser-warning": "69420",
+        },
+        body: json.encode(values));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      if (data['error'] != null && data['error']) {
+        _showAlert(data['message'], 'error');
+        return false;
+      } else {
+        user = data;
+        print("object\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        print(user);
+        print("object\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        await createJWT(data);
+        await loadConversations();
+        await loadInitialUsers();
+        notifyListeners();
+
+        return true;
+      }
+    }
+    return false;
+  }
 
   void setIsLoading(bool value) {
     isLoading = value;
@@ -118,7 +139,7 @@ class AuthProvider with ChangeNotifier {
         await loadConversations();
         await loadInitialUsers();
 
-       setIsLoading(false);
+        setIsLoading(false);
         notifyListeners();
         return true;
       }

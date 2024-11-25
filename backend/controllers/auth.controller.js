@@ -11,7 +11,7 @@ export const signup = async (req, res) => {
         const user = await User.findOne({ username })
 
         if (user) {
-            return res.status(400).json({ error: true, message: "Username already exist!" })
+            return res.send({ error: true, message: "Username already exist!" })
         }
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
@@ -27,25 +27,27 @@ export const signup = async (req, res) => {
             profilePic: gender === 'male' ? boyAvatar : girlAvatar
         })
 
-        if (newUser) {
-            await newUser.save();
-            // generateToken(newUser._id, res);
 
-            res.status(201).json({
-                _id: newUser._id,
-                fullName: newUser.fullName,
-                username: newUser.username,
-                gender: newUser.gender,
-                profilePic: newUser.profilePic
-            })
-        }
+        await newUser.save();
+        // generateToken(newUser._id, res);
+
+        console.log(newUser);
+
+
+        res.send({
+            _id: newUser._id,
+            fullName: newUser.fullName,
+            username: newUser.username,
+            gender: newUser.gender,
+            profilePic: newUser.profilePic
+        });
+
 
     } catch (error) {
         console.log("error in signup controller", error.message);
         res.status(500).json({ error: true, message: "Internal server error" })
     }
 }
-
 
 export const login = async (req, res) => {
     try {

@@ -17,7 +17,7 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   //
   final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
+  final usernameController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -62,7 +62,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               //
                               //username
                               TextFormField(
-                                controller: emailController,
+                                controller: nameController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "Please enter Full name.";
@@ -83,7 +83,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
                               //username
                               TextFormField(
-                                controller: emailController,
+                                controller: usernameController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "Please enter username.";
@@ -223,22 +223,19 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                   });
 
                                   if (_formKey.currentState!.validate()) {
-                                    bool status = await authProvider
-                                        .handleLogin({
-                                      'email': emailController.text,
-                                      'password': passwordController.text
+                                    bool status =
+                                        await authProvider.handleRegistration({
+                                      'fullName': nameController.text,
+                                      'username': usernameController.text,
+                                      'password': passwordController.text,
+                                      'gender': gender,
+                                      'fcmToken': ''
                                     });
-
                                     if (status) {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => HomePage()),
-                                      );
+                                      Navigator.pushReplacementNamed(
+                                          context, '/home');
                                     } else {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
+                                      isLoading = false;
                                     }
                                   } else {
                                     setState(() {
@@ -247,7 +244,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue),
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 27, 26, 85)),
                                 child: isLoading
                                     ? CircularProgressIndicator()
                                     : Text("Register",
@@ -257,14 +255,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                 height: 20,
                               ),
 
-                              //link to register page
+                              //link to login page
                               InkWell(
                                   onTap: () {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              LoginPage()),
+                                          builder: (context) => LoginPage()),
                                     );
                                   },
                                   child: Row(
