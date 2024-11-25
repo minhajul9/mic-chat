@@ -22,6 +22,7 @@ class NotificationService {
 
   void showNotificationInAPP(RemoteMessage message) {
     // RemoteNotification? notification = message.notification;
+
     String? notificationType = message.data['type'];
 
     if (notificationType == 'message') {
@@ -30,6 +31,11 @@ class NotificationService {
       // authProvider.showAlert(
       //     'You are now eligible to donate 🩸blood again.', 'notification');
     }
+
+
+
+      // authProvider.handleNewMessage(message.data['message']);
+    
   }
 
   void _handleNotificationTap(RemoteMessage message) {

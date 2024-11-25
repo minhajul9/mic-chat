@@ -24,6 +24,32 @@ class AuthProvider with ChangeNotifier {
     loadUser();
   }
 
+
+  handleNewMessage(stringMessage) {
+    final message = json.decode(stringMessage);
+
+    if (selectedConversation != null &&
+        selectedConversation!["_id"] == message['conversationId']) {
+      //
+      selectedConversation!['lastSenderId'] = message['senderId'];
+      selectedConversation!['lastMessage'] = message['message'];
+      setMessages([message, ...messages]);
+    }
+    //
+    else {
+      final index = conversations.indexWhere(
+          (item) => item['id'].toString() == message['conversationId']);
+      if (index != -1) {
+        final conversation = conversations.removeAt(index);
+
+        conversation['lastSenderId'] = message['senderId'];
+        conversation['lastMessage'] = message['message'];
+        conversation['status'] = false;
+        setConversations([conversation, ...conversations]);
+      }
+    }
+  }
+
   Future<void> loadUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('adda-access-token');
