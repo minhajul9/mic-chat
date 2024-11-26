@@ -219,13 +219,16 @@ class _MessagePageState extends State<MessagePage> {
                                         return Container(
                                           child: BubbleSpecialThree(
                                             text: message['message'],
-                                            color: Color.fromARGB(
-                                                207, 42, 128, 226),
+                                            color: isSender
+                                                ? Color.fromARGB(
+                                                    207, 83, 92, 145)
+                                                : Color.fromARGB(
+                                                    207, 27, 26, 85),
                                             tail: true,
                                             isSender: isSender,
                                             textStyle: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 16),
+                                                fontSize: 20),
                                           ),
                                         );
                                       }),

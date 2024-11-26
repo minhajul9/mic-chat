@@ -28,25 +28,26 @@ class AuthProvider with ChangeNotifier {
   handleNewMessage(stringMessage) {
     final message = json.decode(stringMessage);
 
-    if (selectedConversation != null &&
-        selectedConversation!["_id"] == message['conversationId']) {
-      //
-      selectedConversation!['lastSenderId'] = message['senderId'];
-      selectedConversation!['lastMessage'] = message['message'];
-      setMessages([message, ...messages]);
-    }
-    //
-    else {
-      final index = conversations.indexWhere(
-          (item) => item['id'].toString() == message['conversationId']);
-      if (index != -1) {
-        final conversation = conversations.removeAt(index);
+    final index = conversations.indexWhere(
+        (item) => item['id'].toString() == message['conversationId']);
+    if (index != -1) {
+      final conversation = conversations.removeAt(index);
 
-        conversation['lastSenderId'] = message['senderId'];
-        conversation['lastMessage'] = message['message'];
-        conversation['status'] = false;
-        setConversations([conversation, ...conversations]);
+      conversation['lastSenderId'] = message['senderId'];
+      conversation['lastMessage'] = message['message'];
+
+      if (selectedConversation != null &&
+          selectedConversation!["_id"] == message['conversationId']) {
+        //
+
+        setMessages([message, ...messages]);
       }
+      //
+      else {
+        conversation['status'] = false;
+      }
+
+      setConversations([conversation, ...conversations]);
     }
   }
 

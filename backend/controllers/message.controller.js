@@ -18,6 +18,8 @@ export const sendMessage = async (req, res) => {
 
         const newMessage = new Message(message)
 
+        console.log(req.decoded);
+
         if (newMessage) {
 
 
@@ -86,10 +88,11 @@ export const sendFirstMessage = async (req, res) => {
         await Promise.all([conversation.save(), newMessage.save()])
 
         const receiver =  await User.findById(receiverId).select('-password');
+        const sender =  await User.findById(senderId).select('-password');
 
-        conversation.participants = [receiver];
+        conversation.participants = [sender];
 
-        await sendNewConversationNotification(receiver.fcmToken, senderName, "sent a message.", {conversation, newMessage});
+        receiver.fcmToken && await sendNewConversationNotification(receiver.fcmToken, senderName, "sent a message.", {conversation, newMessage});
 
 
 
