@@ -9,10 +9,10 @@ export const getUsersForSidebar = async (req, res) => {
 
         const filteredUsers = await User.find({ _id: { $ne: loggedInUser } }).select('-password');
 
-        res.status(200).json(filteredUsers);
+        res.send(filteredUsers);
     } catch (error) {
         console.log("error in get user for sidebar", error.message);
-        res.status(500).json({ error: true, message: "Internal server error" })
+        res.send({ error: true, message: "Internal server error" })
     }
 }
 
@@ -49,10 +49,20 @@ export const getConversations = async (req, res) => {
                 $unwind: "$participantDetails"
             },
             {
+                $project: {
+                    "participantDetails.password": 0
+                }
+            },
+            {
                 $group: {
                     _id: "$_id",
                     participants: { $push: "$participantDetails" },
                     conversationData: { $first: "$$ROOT" }
+                }
+            },
+            {
+                $sort: {
+                    "conversationData.lastMessageTime": -1 // Sort by lastMessageTime in descending order
                 }
             }
         ]);

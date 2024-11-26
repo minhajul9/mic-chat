@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:chat_app/backendConfig/config.dart';
 import 'package:chat_app/src/encryption/encryption.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +24,6 @@ class AuthProvider with ChangeNotifier {
   AuthProvider() {
     loadUser();
   }
-
 
   handleNewMessage(stringMessage) {
     final message = json.decode(stringMessage);
@@ -141,7 +141,10 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> handleLogin(Map<String, dynamic> values) async {
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
     setIsLoading(true);
+
+    values['fcmToken'] = fcmToken;
 
     final response = await http.post(
       Uri.parse('$serverUrl/api/auth/login'),

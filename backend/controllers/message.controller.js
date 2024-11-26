@@ -1,5 +1,7 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
+import User from "../models/user.model.js";
+import { sendMessageNotification } from "../notification/notification.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
 import { ObjectId } from 'mongodb'
 
@@ -9,22 +11,12 @@ export const sendMessage = async (req, res) => {
         const conversationId = req.params.id;
         const senderId = req.decoded._id
         const receiverId = message.receiverId;
+        const senderName = message.senderName;
 
+        console.log('sending message')
         let conversation = await Conversation.findById(conversationId)
-        console.log(conversation)
 
-        if (!conversation) {
-            conversation = await Conversation.create({
-                participants: [senderId, receiverId]
-            })
-        }
-
-        const newMessage = new Message({
-            senderId,
-            receiverId,
-            conversationId: conversation._id,
-            message
-        })
+        const newMessage = new Message(message)
 
         if (newMessage) {
 
@@ -33,24 +25,21 @@ export const sendMessage = async (req, res) => {
             conversation.lastMessageTime = new Date();
             conversation.lastMessage = newMessage.message;
             conversation.lastSenderId = senderId;
-
-            // conversation.save();
         }
 
         await Promise.all([conversation.save(), newMessage.save()])
 
-        //socket-io
-        const receiverSocketId = getReceiverSocketId(receiverId);
-        if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newMessage", newMessage)
-        }
+        const receiver = await User.findById(receiverId);
 
-        res.status(201).json({ message: newMessage, conversation, error: false })
+        await sendMessageNotification(receiver.fcmToken, senderName, "sent a message.", newMessage);
+
+
+        res.send({ message: newMessage, conversation, error: false })
 
 
     } catch (error) {
         console.log("Error from send message controller: ", error.message);
-        res.status(500).json({ error: true, message: "Internal server error." })
+        res.send({ error: true, message: "Internal server error." })
     }
 }
 
@@ -116,17 +105,30 @@ export const getMessages = async (req, res) => {
         const conversation = await Conversation.findById(conversationId);
         // console.log(conversation);
 
-        if (!conversation) return res.status(200).json({ error: false, messages: [] });
+        if (!conversation) return res.send({ error: false, messages: [] });
 
         else {
-            messages = await Message.find({ conversationId: conversationId });
+            messages = await Message.aggregate([
+                {
+                    $match: {
+                        conversationId: conversationId
+                    }
+                },
+
+                {
+                    $sort: {
+                        "messageData.createdAt": -1
+                    }
+                }
+            ]
+            );
             // console.log(messages);
         }
 
-        res.status(200).json({ error: false, messages });
+        res.send({ error: false, messages });
     } catch (error) {
         console.log("Error from send message controller: ", error.message);
-        res.status(500).json({ error: true, message: "Internal server error." })
+        res.send({ error: true, message: "Internal server error." })
     }
 }
 
@@ -142,14 +144,14 @@ export const checkMessages = async (req, res) => {
             }
         })
 
-        if (!conversation) return res.status(200).json({ messages: [], conversation: null });
+        if (!conversation) return res.send({ messages: [], conversation: null });
         const messages = await Message.find({
             conversationId: conversation._id
         })
 
-        res.status(200).json({ messages, conversation, error: false });
+        res.send({ messages, conversation, error: false });
     } catch (error) {
         console.log("Error from send message controller: ", error.message);
-        res.status(500).json({ error: true, message: "Internal server error." })
+        res.send({ error: true, message: "Internal server error." })
     }
 }

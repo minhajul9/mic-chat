@@ -43,7 +43,7 @@ export const signup = async (req, res) => {
 
     } catch (error) {
         console.log("error in signup controller", error.message);
-        res.status(500).json({ error: true, message: "Internal server error" })
+        res.send({ error: true, message: "Internal server error" })
     }
 }
 
@@ -51,6 +51,7 @@ export const login = async (req, res) => {
     try {
 
         const { username, password } = req.body;
+        console.log(req.body);
 
         const user = await User.findOne({ username });
         if (!user) {
@@ -63,6 +64,10 @@ export const login = async (req, res) => {
                 res.send({ error: true, message: "Invalid username or password" })
             }
             else {
+
+                user.fcmToken = req.body.fcmToken;
+
+                await user.save();
 
                 res.send({
                     _id: user._id,
@@ -90,11 +95,11 @@ export const logout = async (req, res) => {
 
         user.fcmToken = '';
         await user.save();
-        res.status(200).json({ error: false, message: "Logged out successfully." })
+        res.send({ error: false, message: "Logged out successfully." })
 
     } catch (error) {
         console.log("error in logout controller", error.message);
-        res.status(500).json({ error: true, message: "Internal server error" })
+        res.send({ error: true, message: "Internal server error" })
     }
 }
 

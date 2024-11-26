@@ -7,7 +7,7 @@ const protectRoute = async (req, res, next) => {
 
 
     if (!authorization) {
-        return res.status(401).send({ timeOut: true, error: true, message: 'unauthorized access' });
+        return res.send({ timeOut: true, error: true, message: 'unauthorized access' });
     }
 
     const token = authorization.split(' ')[1];

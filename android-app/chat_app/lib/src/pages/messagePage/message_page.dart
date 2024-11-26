@@ -280,7 +280,7 @@ class _MessagePageState extends State<MessagePage> {
                                                   widget.receiver['_id'],
                                               'conversationId': widget
                                                   .authProvider
-                                                  .selectedConversation?['id'],
+                                                  .selectedConversation?['_id'],
                                               'senderName': widget
                                                   .authProvider.user['fullName']
                                             };
@@ -407,6 +407,8 @@ class _MessagePageState extends State<MessagePage> {
                                                       .setSelectedConversation(
                                                           updatedConversation);
                                                   messageController.text = '';
+
+                                                  authProvider.setConversations([updatedConversation, ...authProvider.conversations]);
 
                                                   WidgetsBinding.instance
                                                       .addPostFrameCallback(
