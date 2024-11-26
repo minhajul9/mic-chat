@@ -27,6 +27,7 @@ class AuthProvider with ChangeNotifier {
 
   handleNewMessage(stringMessage) {
     final message = json.decode(stringMessage);
+    print(message);
 
     final index = conversations.indexWhere(
         (item) => item['id'].toString() == message['conversationId']);
@@ -49,6 +50,8 @@ class AuthProvider with ChangeNotifier {
 
       setConversations([conversation, ...conversations]);
     }
+
+    notifyListeners();
   }
 
   Future<void> loadUser() async {
@@ -188,11 +191,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> createJWT(Map<String, dynamic> data) async {
-    // String encryptedData = encryptData({
-    //   '_id': data['_id'],
-    //   'username': data['username'],
-    // }, false);
-
+    
     final response = await http.put(
       Uri.parse('$serverUrl/api/jwt/create'),
       headers: {'Content-Type': 'application/json'},

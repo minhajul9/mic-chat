@@ -17,7 +17,7 @@ class AuthCheck extends StatelessWidget {
         return BlinkingLogoPage();
       }
 
-      if (authProvider.user == null) {
+      if (!authProvider.isLoading && authProvider.user == null) {
         Future.microtask(() {
           Navigator.pushReplacementNamed(context, '/login');
         });
