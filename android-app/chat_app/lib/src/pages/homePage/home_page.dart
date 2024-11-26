@@ -196,9 +196,17 @@ class _HomePageState extends State<HomePage> {
                                   final conversation =
                                       authProvider.conversations[index];
 
-                                  print(conversation);
                                   return InkWell(
                                     onTap: () {
+                                      if (!authProvider.conversations[index]
+                                              ['isRead'] &&
+                                          authProvider.conversations[index]
+                                                  ['lastSenderId'] !=
+                                              authProvider.user!['_id']) {
+                                        authProvider.conversations[index]
+                                            ['isRead'] = true;
+                                      }
+                                      
                                       authProvider.setSelectedConversation(
                                           conversation);
                                       Navigator.pushReplacement(
@@ -269,7 +277,19 @@ class _HomePageState extends State<HomePage> {
                                                         ? FontWeight.bold
                                                         : FontWeight.normal,
                                                     fontSize: 10,
-                                                    color: Colors.white),
+                                                    color: !conversation[
+                                                                'isRead'] &&
+                                                            conversation[
+                                                                    'lastSenderId'] !=
+                                                                authProvider
+                                                                        .user![
+                                                                    '_id']
+                                                        ? Colors.white
+                                                        : const Color.fromARGB(
+                                                            214,
+                                                            255,
+                                                            255,
+                                                            255)),
                                               )
                                             ],
                                           )

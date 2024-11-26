@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chat_app/src/providers/auth_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -25,19 +27,22 @@ class NotificationService {
 
     print("got notification");
 
-    // String? notificationType = message.data['type'];
+    String? notificationType = message.data['type'];
 
+    if (notificationType == 'newMessage') {
+      final data = json.decode(message.data['message']);
+      print(data);
+
+      final newConversation = data['conversation'];
+
+      print(newConversation);
+
+      authProvider.setConversations([newConversation, ...authProvider.conversations]);
+    } else {
       authProvider.handleNewMessage(message.data['message']);
-    // if (notificationType == 'message') {
-    // } else if (notificationType == "eligibility") {
-    //   // authProvider.showAlert(
-    //   //     'You are now eligible to donate 🩸blood again.', 'notification');
-    // }
+    }
 
-
-
-      // authProvider.handleNewMessage(message.data['message']);
-    
+    // authProvider.handleNewMessage(message.data['message']);
   }
 
   void _handleNotificationTap(RemoteMessage message) {

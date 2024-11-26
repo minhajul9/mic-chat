@@ -27,7 +27,7 @@ export const sendNewConversationNotification = async (registrationToken, title, 
             title: title,
             body: body,
         },
-        data: { type: 'message', message: JSON.stringify(messageData) },
+        data: { type: 'newMessage', message: JSON.stringify(messageData) },
 
     };
 

@@ -1,7 +1,7 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
-import { sendMessageNotification } from "../notification/notification.js";
+import { sendMessageNotification, sendNewConversationNotification } from "../notification/notification.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
 import { ObjectId } from 'mongodb'
 
@@ -47,12 +47,10 @@ export const sendFirstMessage = async (req, res) => {
     try {
 
         const message = req.body;
-        console.log("sending first message: ", message)
         const receiverId = message.receiverId;
         const senderId = req.decoded._id;
 
         const senderName = message.senderName;
-        delete message.senderName;
 
         let newConversation = false;
 
@@ -86,6 +84,14 @@ export const sendFirstMessage = async (req, res) => {
         }
 
         await Promise.all([conversation.save(), newMessage.save()])
+
+        const receiver =  await User.findById(receiverId).select('-password');
+
+        conversation.participants = [receiver];
+
+        await sendNewConversationNotification(receiver.fcmToken, senderName, "sent a message.", {conversation, newMessage});
+
+
 
         res.json({ message: newMessage, conversation, error: false })
 
