@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, avoid_unnecessary_containers
 
 import 'dart:convert';
 
@@ -54,7 +54,7 @@ class _MessagePageState extends State<MessagePage> {
     // String encryptedId = encryptData(widget.authProvider.user['_id'], true);
     // String conversationId =
     //     encryptData(widget.authProvider.selectedConversation['_id'], true);
-    print(widget.authProvider.selectedConversation['_id']);
+   
 
     final response = await http.get(
         Uri.parse(
@@ -76,7 +76,7 @@ class _MessagePageState extends State<MessagePage> {
             fontSize: 16.0);
       } else {
         // final decrypted = decryptData(data['encryptedData']);
-        print(data['messages'][0]);
+       
         setState(() {
           loading = false;
           widget.authProvider.messages = data['messages'];
@@ -129,7 +129,6 @@ class _MessagePageState extends State<MessagePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (widget.from == 'search') {
       checkMessages();

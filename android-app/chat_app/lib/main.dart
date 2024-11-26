@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import, prefer_const_constructors
+
 import 'package:chat_app/src/component/accessControl/access_control.dart';
 import 'package:chat_app/src/component/blinking_logo.dart';
 import 'package:chat_app/src/pages/homePage/home_page.dart';

@@ -105,9 +105,6 @@ class AuthProvider with ChangeNotifier {
         return false;
       } else {
         user = data;
-        print("object\n\n\n\n\n\n\n\n\n\n\n\n\n");
-        print(user);
-        print("object\n\n\n\n\n\n\n\n\n\n\n\n\n");
         await createJWT(data);
         await loadConversations();
         await loadInitialUsers();
@@ -212,7 +209,6 @@ class AuthProvider with ChangeNotifier {
   }
 
   void setSelectedConversation(Map<String, dynamic>? data) {
-    print(data);
     selectedConversation = data;
 
     notifyListeners();

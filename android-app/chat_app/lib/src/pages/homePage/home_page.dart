@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_to_list_in_spreads, avoid_unnecessary_containers
 
 import 'package:chat_app/src/pages/messagePage/message_page.dart';
 import 'package:chat_app/src/providers/auth_provider.dart';

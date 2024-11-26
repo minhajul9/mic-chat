@@ -1,7 +1,6 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:chat_app/backendConfig/config.dart';
-import 'package:chat_app/src/pages/homePage/home_page.dart';
 import 'package:chat_app/src/pages/registerPage/registration_page.dart';
 import 'package:chat_app/src/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
@@ -114,7 +113,6 @@ class _LoginPageState extends State<LoginPage> {
                               });
 
                               if (_formKey.currentState!.validate()) {
-                                print('object');
                                 bool status = await authProvider.handleLogin({
                                   'username': emailController.text,
                                   'password': passwordController.text
