@@ -108,22 +108,17 @@ export const getMessages = async (req, res) => {
         if (!conversation) return res.send({ error: false, messages: [] });
 
         else {
-            messages = await Message.aggregate([
-                {
-                    $match: {
-                        conversationId: conversationId
-                    }
-                },
-
-                {
-                    $sort: {
-                        "messageData.createdAt": -1
-                    }
-                }
-            ]
-            );
+            messages = await Message.find({ conversationId: conversationId }).sort({createdAt: -1});
             // console.log(messages);
         }
+
+        if(conversation.lastSenderId == req.decoded._id);{
+            conversation.isRead = true;
+
+            await conversation.save();
+        }
+
+        
 
         res.send({ error: false, messages });
     } catch (error) {

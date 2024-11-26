@@ -23,14 +23,16 @@ class NotificationService {
   void showNotificationInAPP(RemoteMessage message) {
     // RemoteNotification? notification = message.notification;
 
-    String? notificationType = message.data['type'];
+    print("got notification");
 
-    if (notificationType == 'message') {
-      // authProvider.handleNewMessage(message.data['message']);
-    } else if (notificationType == "eligibility") {
-      // authProvider.showAlert(
-      //     'You are now eligible to donate 🩸blood again.', 'notification');
-    }
+    // String? notificationType = message.data['type'];
+
+      authProvider.handleNewMessage(message.data['message']);
+    // if (notificationType == 'message') {
+    // } else if (notificationType == "eligibility") {
+    //   // authProvider.showAlert(
+    //   //     'You are now eligible to donate 🩸blood again.', 'notification');
+    // }
 
 
 

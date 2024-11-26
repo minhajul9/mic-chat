@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                                   final conversation =
                                       authProvider.conversations[index];
 
-                                  // print(conversation);
+                                  print(conversation);
                                   return InkWell(
                                     onTap: () {
                                       authProvider.setSelectedConversation(
@@ -243,13 +243,35 @@ class _HomePageState extends State<HomePage> {
                                           SizedBox(
                                             width: 10,
                                           ),
-                                          Text(
-                                            conversation["participants"][0]
-                                                ['fullName'],
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                                color: Colors.white),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                conversation["participants"][0]
+                                                    ['fullName'],
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                    color: Colors.white),
+                                              ),
+                                              Text(
+                                                conversation["lastMessage"] ??
+                                                    "",
+                                                style: TextStyle(
+                                                    fontWeight: !conversation[
+                                                                'isRead'] &&
+                                                            conversation[
+                                                                    'lastSenderId'] !=
+                                                                authProvider
+                                                                        .user![
+                                                                    '_id']
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                    fontSize: 10,
+                                                    color: Colors.white),
+                                              )
+                                            ],
                                           )
                                         ],
                                       ),
@@ -296,6 +318,7 @@ class _HomePageState extends State<HomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 // mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  //image
                                   Container(
                                     width: 60,
                                     height: 60,

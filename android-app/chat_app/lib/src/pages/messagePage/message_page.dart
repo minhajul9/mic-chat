@@ -54,7 +54,6 @@ class _MessagePageState extends State<MessagePage> {
     // String encryptedId = encryptData(widget.authProvider.user['_id'], true);
     // String conversationId =
     //     encryptData(widget.authProvider.selectedConversation['_id'], true);
-   
 
     final response = await http.get(
         Uri.parse(
@@ -76,7 +75,7 @@ class _MessagePageState extends State<MessagePage> {
             fontSize: 16.0);
       } else {
         // final decrypted = decryptData(data['encryptedData']);
-       
+
         setState(() {
           loading = false;
           widget.authProvider.messages = data['messages'];
@@ -147,8 +146,6 @@ class _MessagePageState extends State<MessagePage> {
             onPressed: () => {
               widget.authProvider.setSelectedConversation(null),
               widget.authProvider.setMessages([]),
-
-              // }),
               Navigator.pushReplacement(
                   context, MaterialPageRoute(builder: (context) => HomePage()))
             },
@@ -408,7 +405,12 @@ class _MessagePageState extends State<MessagePage> {
                                                           updatedConversation);
                                                   messageController.text = '';
 
-                                                  authProvider.setConversations([updatedConversation, ...authProvider.conversations]);
+                                                  authProvider
+                                                      .setConversations([
+                                                    updatedConversation,
+                                                    ...authProvider
+                                                        .conversations
+                                                  ]);
 
                                                   WidgetsBinding.instance
                                                       .addPostFrameCallback(

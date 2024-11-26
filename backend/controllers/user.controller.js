@@ -57,15 +57,21 @@ export const getConversations = async (req, res) => {
                 $group: {
                     _id: "$_id",
                     participants: { $push: "$participantDetails" },
-                    conversationData: { $first: "$$ROOT" }
+                    isRead: {$first: "$isRead"},
+                    createdAt: {$first: "$createdAt"},
+                    updatedAt: {$first: "$updatedAt"},
+                    lastMessageTime: {$first: "$lastMessageTime"},
+                    lastSenderId: {$first: "$lastSenderId"},
+                    lastMessage: {$first: "$lastMessage"},
                 }
             },
             {
                 $sort: {
-                    "conversationData.lastMessageTime": -1 // Sort by lastMessageTime in descending order
+                    "lastMessageTime": -1 // Sort by lastMessageTime in descending order
                 }
             }
         ]);
+
 
 
 
