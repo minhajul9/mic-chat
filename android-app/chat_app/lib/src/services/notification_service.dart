@@ -4,7 +4,6 @@ import 'package:chat_app/src/providers/auth_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
 
 class NotificationService {
   final AuthProvider authProvider;
@@ -23,21 +22,18 @@ class NotificationService {
   }
 
   void showNotificationInAPP(RemoteMessage message) {
-    // RemoteNotification? notification = message.notification;
-
-    print("got notification");
+    // RemoteNotification? notification = message.notification
 
     String? notificationType = message.data['type'];
 
     if (notificationType == 'newMessage') {
       final data = json.decode(message.data['message']);
-      print(data);
 
       final newConversation = data['conversation'];
 
-      print(newConversation);
 
-      authProvider.setConversations([newConversation, ...authProvider.conversations]);
+      authProvider
+          .setConversations([newConversation, ...authProvider.conversations]);
     } else {
       authProvider.handleNewMessage(message.data['message']);
     }

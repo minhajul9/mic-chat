@@ -26,11 +26,12 @@ class AuthProvider with ChangeNotifier {
   }
 
   handleNewMessage(stringMessage) {
+    //
     final message = json.decode(stringMessage);
-    print(message);
 
     final index = conversations.indexWhere(
-        (item) => item['id'].toString() == message['conversationId']);
+        (item) => item['_id'].toString() == message['conversationId']);
+
     if (index != -1) {
       final conversation = conversations.removeAt(index);
 
@@ -49,6 +50,7 @@ class AuthProvider with ChangeNotifier {
       }
 
       setConversations([conversation, ...conversations]);
+
     }
 
     notifyListeners();
@@ -191,7 +193,6 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> createJWT(Map<String, dynamic> data) async {
-    
     final response = await http.put(
       Uri.parse('$serverUrl/api/jwt/create'),
       headers: {'Content-Type': 'application/json'},
