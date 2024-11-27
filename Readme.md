@@ -55,15 +55,12 @@ This project ensures fast, responsive, and secure communication between the user
 <p align="center" gap>
     <img src="./images/login.jpg" alt="Web Dashboard" width="280">
     <img src="./images/registration.jpg" alt="Web Dashboard" width="280">
+    <img src="./images/home.jpg" alt="Web Dashboard" width="280">
+    <img src="./images/messages.jpg" alt="Web Dashboard" width="280">
 </p>
 
 
-### Web Frontend:
-![Web Dashboard](https://via.placeholder.com/800x400?text=Web+Dashboard)
 
-### Flutter App:
-![Flutter App Home Screen](https://via.placeholder.com/400x800?text=Flutter+Home+Screen)
-![Flutter App Details Screen](https://via.placeholder.com/400x800?text=Flutter+Details+Screen)
 
 ---
 
@@ -74,3 +71,28 @@ This project ensures fast, responsive, and secure communication between the user
    ```bash
    git clone https://github.com/your-repo.git
    cd your-repo/backend
+
+2. Install Packages
+    ```bash
+    npm install
+
+3. Run backend
+    ```bash
+    nodemon index.js
+
+
+### Web Frontend (React.js)
+1. Install Packages
+    ```bash
+    npm install
+
+2. Run
+    ```bash
+    npm run dev
+
+### Android (Flutter)
+Run the flutter app
+   ```bash
+   flutter run
+
+
